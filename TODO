@@ -1,0 +1,8 @@
+
+TODO:
+
+* make sure our output is consistent (currently when USB stick contains multiple
+  filesystems udev runs many instances and their output is mixed),
+* support different MOUNT_OPTS for different filesystems (currently we give all
+  of them vfat ones, so e.g. ext2 fails to mount).
+
