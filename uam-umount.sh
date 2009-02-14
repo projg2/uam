@@ -24,10 +24,12 @@ if [ -n "${MP}" ]; then
 		# if we created the mountpoint, try to remove it
 		mp_remove "${MP}"
 	else
-		mount -o remount,ro "${DEVPATH}"
-		[ $? -eq 0 ] && debug "...... filesystem remounted read-only."
+		if $(bool "${UMOUNT_TRY_RO}"); then
+			mount -o remount,ro "${DEVPATH}"
+			[ $? -eq 0 ] && debug "...... filesystem remounted read-only."
+		fi
 
-		umount -l "${DEVPATH}"
+		bool "${UMOUNT_TRY_LAZY}" && umount -l "${DEVPATH}"
 		if [ $? -eq 0 ]; then
 			debug "...... lazy umount succeeded."
 		else

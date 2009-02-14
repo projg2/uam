@@ -16,6 +16,17 @@ conf_read() {
 	return 1
 }
 
+# Parse value of boolean variable.
+
+bool() {
+	case "$1" in
+		1|[yY]|[tT]|[yY][eE][sS]|[tT][rR][uU][eE]|[oO][nN])
+			return 0;;
+		*)
+			return 1;;
+	esac
+}
+
 # Determine whether we were called by udev.
 
 under_udev() {

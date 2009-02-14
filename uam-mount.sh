@@ -37,10 +37,10 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 						debug "...... unable to create mountpoint, trying another one."
 					else
 						debug "... mountpoint ${MP} free, using it."
-						mount -o umask=07,gid=plugdev "${DEVPATH}" "${MP}"
+						mount -o "${MOUNT_OPTS}" "${DEVPATH}" "${MP}"
 						MPDEV="$(mp_used "${MP}")"
 						if [ "${MPDEV}" == "${DEVPATH}" ]; then
-							debug "...... mount succeeded."
+							debug "...... mount successful."
 						elif [ -n "${MPDEV}" ]; then
 							debug "...... ${MPDEV} mounted in our mointpoint (expected ${DEVPATH})."
 						else
