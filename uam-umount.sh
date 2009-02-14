@@ -13,7 +13,7 @@ debug "Starting uam umounter on ${DEVPATH}."
 
 # We (try to) umount all mounts (not only ours), because the device will be unavailable anyway
 
-MP="$(awk "\$1 == \"${DEVPATH}\" { print \$2 }" /proc/mounts)"
+MP="$(mp_find "${DEVPATH}")"
 
 if [ -n "${MP}" ]; then
 	debug "... found ${DEVPATH} mounted in ${MP}, trying to umount."

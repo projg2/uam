@@ -11,7 +11,7 @@ fi
 
 debug "Starting uam mounter on ${DEVPATH}."
 
-if [ -z "${DEVNAME}" ]; then # env not populated by udev
+if ! under_udev; then # env not populated by udev
 	__ENV="$(/lib/udev/vol_id --export "${DEVPATH}")"
 
 	if [ $? -eq 0 ]; then
@@ -33,24 +33,20 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 		*)
 
 			# 2) find a free mountpoint for it
-			for _MP in "${ID_FS_LABEL}" "${DEVICE#/dev/}"; do
+			for _MP in "${ID_FS_LABEL}" "${DEVPATH#/dev/}"; do
 				MP="/media/${_MP}"
 				[ -z "${_MP}" ] && continue
-				MPDEV="$(awk "\$2 == \"${MP}\" { print \$1 }" /proc/mounts)"
+				MPDEV="$(mp_used "${MP}")"
 
 				if [ -z "${MPDEV}" ]; then
-					if [ ! -d "${MP}" ]; then
-						debug "... trying to create ${MP}"
-						mkdir -p "${MP}"
-						touch "${MP}/.created_by_uam"
-					fi
+					mp_create "${MP}"
 
 					if [ ! -d "${MP}" ]; then
 						debug "...... unable to create mountpoint, trying another one."
 					else
 						debug "... mountpoint ${MP} free, using it."
 						mount -o umask=07,gid=plugdev "${DEVPATH}" "${MP}"
-						MPDEV="$(awk "\$2 == \"${MP}\" { print \$1 }" /proc/mounts)"
+						MPDEV="$(mp_used "${MP}")"
 						if [ "${MPDEV}" == "${DEVPATH}" ]; then
 							debug "...... mount succeeded."
 						elif [ -n "${MPDEV}" ]; then
