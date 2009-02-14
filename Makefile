@@ -9,7 +9,7 @@ SCRIPTS_NX	= uam-common.sh
 UDEV_RULES	= 10-uam.rules
 
 all:
-	@echo There is no 'make', just 'make install' and have fun.
+	@echo "There is no 'make', just 'make install' and have fun."
 
 clean:
 	true
