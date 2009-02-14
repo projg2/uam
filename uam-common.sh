@@ -1,5 +1,21 @@
 #!/bin/bash
 
+# Read configuration
+
+conf_read() {
+	local D F
+
+	for D in "$(dirname "$0")" '/etc/udev'; do
+		F="${D}/uam.conf"
+		if [ -f "${F}" ]; then
+			. "${F}"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
 # Determine whether we were called by udev.
 
 under_udev() {

@@ -11,6 +11,7 @@ fi
 
 debug "Starting uam mounter on ${DEVPATH}."
 
+conf_read
 env_populate
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then
@@ -25,7 +26,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 
 			# 2) find a free mountpoint for it
 			for _MP in "${ID_FS_LABEL}" "${DEVPATH#/dev/}"; do
-				MP="/media/${_MP}"
+				MP="${MOUNTPOINT_BASE}/${_MP}"
 				[ -z "${_MP}" ] && continue
 				MPDEV="$(mp_used "${MP}")"
 
