@@ -1,9 +1,6 @@
 #!/bin/bash
 
-debug() {
-	logger -p info -t "$(basename "$0")" "$@"
-#	echo "$@" >&2
-}
+. "$(dirname "$0")/uam-common.sh"
 
 DEVPATH="${DEVNAME:-$1}"
 
@@ -52,7 +49,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 						debug "...... unable to create mountpoint, trying another one."
 					else
 						debug "... mountpoint ${MP} free, using it."
-						sg plugdev "mount -o umask=07 '${DEVPATH}' '${MP}'"
+						mount -o umask=07,gid=plugdev "${DEVPATH}" "${MP}"
 						MPDEV="$(awk "\$2 == \"${MP}\" { print \$1 }" /proc/mounts)"
 						if [ "${MPDEV}" == "${DEVPATH}" ]; then
 							debug "...... mount succeeded."
@@ -60,6 +57,8 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 							debug "...... ${MPDEV} mounted in our mointpoint (expected ${DEVPATH})."
 						else
 							debug "...... mount failed."
+							# maybe we've created a mountpoint already
+							mp_remove "${MP}"
 							exit 1
 						fi
 					fi

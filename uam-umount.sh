@@ -1,9 +1,6 @@
 #!/bin/bash
 
-debug() {
-	logger -p info -t "$(basename "$0")" "$@"
-#	echo "$@" >&2
-}
+. "$(dirname "$0")/uam-common.sh"
 
 DEVPATH="${DEVNAME:-$1}"
 
@@ -25,18 +22,7 @@ if [ -n "${MP}" ]; then
 		debug "...... standard umount succeeded."
 
 		# if we created the mountpoint, try to remove it
-		if [ -f "${MP}/.created_by_uam" ]; then
-			rm "${MP}/.created_by_uam"
-			rmdir "${MP}"
-			if [ $? -eq 0 ]; then
-				debug "...... successfully removed our mountpoint."
-			else
-				# touch the file again, so if above rm succeeded and rmdir failed,
-				# we still will know that's our mountpoint
-				touch "${MP}/.created_by_uam"
-				debug "...... unable to remove our mountpoint."
-			fi
-		fi
+		mp_remove "${MP}"
 	else
 		mount -o remount,ro "${DEVPATH}"
 		[ $? -eq 0 ] && debug "...... filesystem remounted read-only."
@@ -48,5 +34,7 @@ if [ -n "${MP}" ]; then
 			debug "...... unable to umount device."
 		fi
 	fi
+else
+	debug "... not mounted."
 fi
 
