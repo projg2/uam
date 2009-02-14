@@ -17,6 +17,24 @@ debug() {
 	fi
 }
 
+# Populate environment with device information.
+
+env_populate() {
+	# udev already does this for us
+	if ! under_udev; then
+		__ENV="$(/lib/udev/vol_id --export "${DEVPATH}")"
+
+		if [ $? -eq 0 ]; then
+			eval "${__ENV}"
+		else
+			debug "... unable to get device information."
+			exit 1
+		fi
+	fi
+}
+
+# Create mountpoint if it doesn't exist.
+
 mp_create() {
 	local MP="$1"
 	local NOTEFILE="${MP}/.created_by_uam"
@@ -27,6 +45,8 @@ mp_create() {
 		touch "${NOTEFILE}"
 	fi
 }
+
+# Remove mounpoint if it's ours.
 
 mp_remove() {
 	local MP="$1"
@@ -46,9 +66,13 @@ mp_remove() {
 	fi
 }
 
+# Determine whether a mountpoint is used and print the device it is used by.
+
 mp_used() {
 	awk "\$2 == \"$1\" { print \$1 }" /proc/mounts
 }
+
+# Determine whether a device is mounted and print the mountpoint it uses.
 
 mp_find() {
 	awk "\$1 == \"$1\" { print \$2 }" /proc/mounts

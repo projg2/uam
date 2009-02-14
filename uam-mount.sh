@@ -11,16 +11,7 @@ fi
 
 debug "Starting uam mounter on ${DEVPATH}."
 
-if ! under_udev; then # env not populated by udev
-	__ENV="$(/lib/udev/vol_id --export "${DEVPATH}")"
-
-	if [ $? -eq 0 ]; then
-		eval "${__ENV}"
-	else
-		debug "... unable to get device information."
-		exit 1
-	fi
-fi
+env_populate
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then
 	# 1) try to mount using fstab, this way we also determine if it's already mounted
