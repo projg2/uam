@@ -19,7 +19,7 @@ if [ -n "${MP}" ]; then
 	debug "... found ${DEVPATH} mounted in ${MP}, trying to umount."
 	umount "${DEVPATH}"
 	if [ $? -eq 0 ]; then
-		debug "...... standard umount succeeded."
+		debug "...... standard umount successful."
 
 		# if we created the mountpoint, try to remove it
 		mp_remove "${MP}"
@@ -31,7 +31,7 @@ if [ -n "${MP}" ]; then
 
 		bool "${UMOUNT_TRY_LAZY}" && umount -l "${DEVPATH}"
 		if [ $? -eq 0 ]; then
-			debug "...... lazy umount succeeded."
+			debug "...... lazy umount successful."
 		else
 			debug "...... unable to umount device."
 		fi

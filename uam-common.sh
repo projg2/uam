@@ -76,6 +76,8 @@ mp_create() {
 # Remove mounpoint if it's ours.
 
 mp_remove() {
+	bool "${REMOVE_MOUNTPOINTS}" || return
+
 	local MP="$1"
 	local NOTEFILE="${MP}/.created_by_uam"
 
