@@ -11,6 +11,8 @@ fi
 
 debug "Starting uam umounter on ${DEVPATH}."
 
+conf_read
+
 # We (try to) umount all mounts (not only ours), because the device will be unavailable anyway
 
 MP="$(mp_find "${DEVPATH}")"

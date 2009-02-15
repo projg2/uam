@@ -107,3 +107,16 @@ mp_find() {
 	awk "\$1 == \"$1\" { print \$2 }" /proc/mounts
 }
 
+# Gets MOUNT_OPTS correct for specific filesystem. If there are no specific opts
+# set, uses global ones.
+
+get_mountopts() {
+	local FS="$(echo "$1" | tr a-z A-Z)"
+	local VAL
+
+	[ -n "${FS}" ]	&& VAL="$(eval "echo \${MOUNT_OPTS_${FS//[^A-Z]/}"})"
+	[ -z "${VAL}" ]	&& VAL="${MOUNT_OPTS}"
+
+	echo "${VAL}"
+}
+
