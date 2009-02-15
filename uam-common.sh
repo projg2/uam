@@ -32,6 +32,16 @@ bool() {
 	esac
 }
 
+# Check whether value is a correct integer.
+
+isint() {
+	local VAL="$1"
+	
+	(( VAL *= 1 ))
+
+	[ "${VAL}" = "$1" ]
+}
+
 # Determine whether we were called by udev.
 
 under_udev() {
@@ -77,11 +87,13 @@ env_populate() {
 	fi
 }
 
+MP_NOTEFN=".created_by_uam"
+
 # Create mountpoint if it doesn't exist.
 
 mp_create() {
 	local MP="$1"
-	local NOTEFILE="${MP}/.created_by_uam"
+	local NOTEFILE="${MP}/${MP_NOTEFN}"
 
 	if [ ! -d "${MP}" ]; then
 		debug "... trying to create ${MP}"
@@ -90,13 +102,13 @@ mp_create() {
 	fi
 }
 
-# Remove mounpoint if it's ours.
+# Remove mountpoint if it's ours.
 
 mp_remove() {
 	bool "${REMOVE_MOUNTPOINTS}" || return
 
 	local MP="$1"
-	local NOTEFILE="${MP}/.created_by_uam"
+	local NOTEFILE="${MP}/${MP_NOTEFN}"
 
 	if [ -f "${NOTEFILE}" ]; then
 		rm "${NOTEFILE}"
@@ -110,6 +122,35 @@ mp_remove() {
 			debug "...... unable to remove our mountpoint."
 		fi
 	fi
+}
+
+# Remove unused mountpoints (useful if user umounts our devices himself).
+# Doesn't support more complex templates.
+
+mp_cleanup() {
+	bool "${CLEANUP_ALLOW}" || return
+
+	local F MP D
+	local DEPTH="${CLEANUP_MAXDEPTH}"
+
+	if ! isint "${DEPTH}"; then
+		DEPTH=0
+		for MP in "${MOUNTPOINT_TEMPLATES[@]}"; do
+			MP="${MP%%/}" # cut off trailing slashes
+			MP="${MP//[^\/]/}"
+			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
+		done
+	fi
+	(( DEPTH += 2 ))
+
+	find "${MOUNTPOINT_BASE}" -mindepth 2 -maxdepth ${DEPTH} \
+			-name "${MP_NOTEFN}" -type f | while read F; do
+
+		D="$(dirname "${F}")"
+		MP="$(mp_used "${D}")"
+
+		[ -z "${MP}" ] && mp_remove "${D}"
+	done
 }
 
 # Determine whether a mountpoint is used and print the device it is used by.

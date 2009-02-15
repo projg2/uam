@@ -30,10 +30,10 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
 			PARTN="${DEVBASENAME//[^0-9]/}"
 
-			for _MP in ${MOUNTPOINT_TEMPLATES[@]}; do
+			for _MP in "${MOUNTPOINT_TEMPLATES[@]}"; do
 				_MP_EVAL="$(eval echo ${_MP})"
 				[ -z "${_MP_EVAL}" ] && continue
-				MP="${MOUNTPOINT_BASE}/${_MP_EVAL%/}"
+				MP="${MOUNTPOINT_BASE}/${_MP_EVAL%%/}"
 				MPDEV="$(mp_used "${MP}")"
 
 				if [ -z "${MPDEV}" ]; then

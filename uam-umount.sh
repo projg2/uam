@@ -45,5 +45,7 @@ if [ -n "${MP}" ]; then
 	fi
 else
 	debug "... not mounted."
+	# it is possible that user umounted the fs him/herself, so cleanup the mountpoints
+	mp_cleanup
 fi
 
