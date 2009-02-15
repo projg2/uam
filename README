@@ -1,0 +1,47 @@
+udev-based automounter (uam)
+(C) 2008 Michał Górny
+Licensed under the terms of GPL2
+
+
+== INTRO
+
+What is it all about? This is just simple tool for mounting pendrives and alikes
+when inserted -- something like ivman or functionality integrated in KDE/GNOME.
+
+So what's the difference? Unlike those tools uam doesn't use HAL. Unlike
+traditional automounters it doesn't require you to sacrifice memory for three
+additional daemons -- HAL, dbus & the mounter itself. Instead you just have to
+have udev running (which you'd like to have anyway) and uam will be called by it
+everytime an USB stick is inserted.
+
+It has few drawbacks too. The most important that it can't mount ejectable
+drives -- it fully depends on udev, which doesn't report anything when CD or
+floppy is inserted.
+
+Currently there is also no mechanism for allowing non-root users to umount
+uam-mounted drives. They can either 'sync' the device and hope everything will
+be fine when they remove the disk (uam will unmount it then) or use pmount.
+
+
+== INSTALLING
+
+# make install
+...and you're done. The scripts will be installed in /lib/udev/uam/, config file
+will be located in /etc/udev and rules file in /etc/udev/rules.d/.
+
+You'd probably like to reload udev rules, too:
+# udevadm control --reload-rules
+
+
+== USING
+
+It should 'just work'. If it doesn't, take a look at syslog and/or configuration
+file. If you're sure everything is set right, contact me and I'll see what I can
+do for you.
+
+
+== CONTACT
+
+xmpp:mgorny@jabster.pl
+http://mgorny.alt.pl/j/webmail
+
