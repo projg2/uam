@@ -28,6 +28,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			DEVBASENAME="$(basename "${DEVPATH}")"
 			SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
 			PARTN="${DEVBASENAME//[^0-9]/}"
+
 			for _MP in ${MOUNTPOINT_TEMPLATES[@]}; do
 				_MP_EVAL="$(eval echo ${_MP})"
 				[ -z "${_MP_EVAL}" ] && continue

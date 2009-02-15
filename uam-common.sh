@@ -22,7 +22,10 @@ bool() {
 	case "$1" in
 		1|[yY]|[tT]|[yY][eE][sS]|[tT][rR][uU][eE]|[oO][nN])
 			return 0;;
+		0|[nN]|[fF]|[nN][oO]|[fF][aA][lL][sS][eE]|[oO][fF][fF])
+			return 1;;
 		*)
+			debug "Incorrect value in bool ($1), assuming false."
 			return 1;;
 	esac
 }
@@ -38,7 +41,7 @@ under_udev() {
 
 debug() {
 	if under_udev; then
-		logger -p info -t "$(basename "$0")" "$@"
+		logger -p info -t "$(basename "$0")[${DEVNAME}]" "$@"
 	else
 		echo "$@" >&2
 	fi
