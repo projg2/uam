@@ -11,7 +11,6 @@ fi
 
 debug "Starting uam mounter on ${DEVPATH}."
 
-conf_read
 env_populate
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then
@@ -19,9 +18,11 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 	mount "${DEVPATH}"
 	case $? in
 		0)
-			debug "... mounted due to fstab.";;
+			debug "... mounted due to fstab."
+			summary "mounted due to fstab.";;
 		32)
-			debug "... already mounted!";;
+			debug "... already mounted!"
+			summary "ignoring, already mounted!";;
 		*)
 
 			# 2) find a free mountpoint for it
@@ -46,8 +47,10 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 
 						if [ $? -eq 0 ]; then
 							debug "...... mount successful."
+							summary "mounted successfully in ${MP}."
 						else
 							debug "...... mount failed."
+							summary "unable to mount."
 							# maybe we've created a mountpoint already
 							mp_remove "${MP}"
 							exit 1
@@ -58,6 +61,10 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 					debug "... mountpoint ${MP} already used for ${MPDEV}."
 				fi
 			done
+
+			debug "... no more mountpoints, failing."
+			summary "unable to find free mountpoint."
+			exit 1
 		;;
 	esac
 fi

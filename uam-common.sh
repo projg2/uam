@@ -16,6 +16,8 @@ conf_read() {
 	return 1
 }
 
+conf_read
+
 # Parse value of boolean variable.
 
 bool() {
@@ -25,7 +27,7 @@ bool() {
 		0|[nN]|[fF]|[nN][oO]|[fF][aA][lL][sS][eE]|[oO][fF][fF])
 			return 1;;
 		*)
-			debug "Incorrect value in bool ($1), assuming false."
+			outmsg "Incorrect value in bool ($1), assuming false."
 			return 1;;
 	esac
 }
@@ -39,12 +41,24 @@ under_udev() {
 # If running under udev, output specified message using syslog
 # else just print it into STDERR.
 
-debug() {
+outmsg() {
 	if under_udev; then
 		logger -p info -t "$(basename "$0")[${DEVNAME}]" "$@"
 	else
 		echo "$@" >&2
 	fi
+}
+
+# Output msg using outmsg() when ${VERBOSE} is on.
+
+debug() {
+	bool "${VERBOSE}" && outmsg "$@"
+}
+
+# Output msg using outmsg() when ${VERBOSE} is off.
+
+summary() {
+	bool "${VERBOSE}" || outmsg "$@"
 }
 
 # Populate environment with device information.
