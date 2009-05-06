@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 . "$(dirname "$0")/uam-common.sh"
 
@@ -28,12 +28,15 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			# 2) find a free mountpoint for it
 			DEVBASENAME="$(basename "${DEVPATH}")"
 			SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
-			PARTN="${DEVBASENAME//[^0-9]/}"
+			PARTN="${DEVBASENAME##*[^0-9]}"
 
-			for _MP in "${MOUNTPOINT_TEMPLATES[@]}"; do
-				_MP_EVAL="$(eval echo ${_MP})"
-				[ -z "${_MP_EVAL}" ] && continue
-				MP="${MOUNTPOINT_BASE}/${_MP_EVAL%%/}"
+			eval set -- "$(mp_getall)"
+			while [ $# -gt 0 ]; do
+				_MP="$1"
+				shift
+
+				[ -z "${_MP}" ] && continue
+				MP="${MOUNTPOINT_BASE}/${_MP%%/}"
 				MPDEV="$(mp_used "${MP}")"
 
 				if [ -z "${MPDEV}" ]; then

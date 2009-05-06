@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Read configuration
 
@@ -37,7 +37,7 @@ bool() {
 isint() {
 	local VAL="$1"
 	
-	$(( VAL *= 1 ))
+	: $(( VAL *= 1 ))
 
 	[ "${VAL}" = "$1" ]
 }
@@ -89,6 +89,13 @@ env_populate() {
 
 MP_NOTEFN=".created_by_uam"
 
+# Get preprocessed mountpoint 'array'
+
+mp_getall() {
+	echo "${MOUNTPOINT_TEMPLATES}" | sed -e '/^[[:space:]]*$/d' \
+			-e 's/\(".*"\).*#.*$/\1 \\/'
+}
+
 # Create mountpoint if it doesn't exist.
 
 mp_create() {
@@ -135,13 +142,14 @@ mp_cleanup() {
 
 	if ! isint "${DEPTH}"; then
 		DEPTH=0
-		for MP in "${MOUNTPOINT_TEMPLATES[@]}"; do
-			MP="${MP%%/}" # cut off trailing slashes
-			MP="${MP//[^\/]/}"
+		eval set -- "$(mp_getall)"
+		while [ $# -gt 0 ]; do
+			MP="$(echo "${1%%/}" | tr -cd /)"
 			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
+			shift
 		done
 	fi
-	$(( DEPTH += 2 ))
+	: $(( DEPTH += 2 ))
 
 	find "${MOUNTPOINT_BASE}" -mindepth 2 -maxdepth ${DEPTH} \
 			-name "${MP_NOTEFN}" -type f | while read F; do
@@ -169,10 +177,10 @@ mp_find() {
 # set, uses global ones.
 
 get_mountopts() {
-	local FS="$(echo "$1" | tr a-z A-Z)"
+	local FS="$(echo "$1" | tr a-z A-Z | tr -cd A-Z)"
 	local VAL
 
-	[ -n "${FS}" ]	&& VAL="$(eval "echo \${MOUNT_OPTS_${FS//[^A-Z]/}"})"
+	[ -n "${FS}" ]	&& VAL="$(eval "echo \${MOUNT_OPTS_${FS}"})"
 	[ -z "${VAL}" ]	&& VAL="${MOUNT_OPTS}"
 
 	echo "${VAL}"
