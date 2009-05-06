@@ -37,7 +37,7 @@ bool() {
 isint() {
 	local VAL="$1"
 	
-	(( VAL *= 1 ))
+	$(( VAL *= 1 ))
 
 	[ "${VAL}" = "$1" ]
 }
@@ -141,7 +141,7 @@ mp_cleanup() {
 			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
 		done
 	fi
-	(( DEPTH += 2 ))
+	$(( DEPTH += 2 ))
 
 	find "${MOUNTPOINT_BASE}" -mindepth 2 -maxdepth ${DEPTH} \
 			-name "${MP_NOTEFN}" -type f | while read F; do
