@@ -90,11 +90,26 @@ env_populate() {
 
 MP_NOTEFN=".created_by_uam"
 
-# Get preprocessed mountpoint 'array'
+# Get processed array.
 
-mp_getall() {
-	echo "${MOUNTPOINT_TEMPLATES}" | sed -e '/^[[:space:]]*$/d' \
+getarray() {
+	echo "$1" | sed -e '/^[[:space:]]*$/d' \
 			-e 's/\(".*"\).*#.*$/\1 \\/'
+}
+
+# Execute provided function for each of array elements.
+# Function should return false to break the loop, else true.
+
+foreach() {
+	local FUNC ARR MP
+	ARR="$1"
+	FUNC="$2"
+
+	eval set -- "$(getarray "${ARR}")"
+	while [ $# -gt 0 ]; do
+		"${FUNC}" "$1" || break
+		shift
+	done
 }
 
 # Create mountpoint if it doesn't exist.
@@ -145,12 +160,14 @@ mp_cleanup() {
 
 	if ! isint "${DEPTH}"; then
 		DEPTH=0
-		eval set -- "$(mp_getall)"
-		while [ $# -gt 0 ]; do
+		function mp_countslashes() {
 			MP="$(echo "${1%%/}" | tr -cd /)"
 			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
-			shift
-		done
+
+			return 0
+		}
+
+		foreach "${MOUNTPOINT_TEMPLATES}" mp_countslashes
 	fi
 	: $(( DEPTH += 2 ))
 

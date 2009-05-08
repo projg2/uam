@@ -30,12 +30,10 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
 			PARTN="${DEVBASENAME##*[^0-9]}"
 
-			eval set -- "$(mp_getall)"
-			while [ $# -gt 0 ]; do
+			try_mountpoint() {
 				_MP="$1"
-				shift
 
-				[ -z "${_MP}" ] && continue
+				[ -z "${_MP}" ] && return 0
 				MP="${MOUNTPOINT_BASE}/${_MP%%/}"
 				MPDEV="$(mp_used "${MP}")"
 
@@ -63,7 +61,11 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 				else
 					debug "... mountpoint ${MP} already used for ${MPDEV}."
 				fi
-			done
+
+				return 0
+			}
+
+			foreach "${MOUNTPOINT_TEMPLATES}" try_mountpoint
 
 			debug "... no more mountpoints, failing."
 			summary "unable to find free mountpoint."
