@@ -94,7 +94,8 @@ MP_NOTEFN=".created_by_uam"
 
 getarray() {
 	echo "$1" | sed -e '/^[[:space:]]*$/d' \
-			-e 's/\(".*"\).*#.*$/\1 \\/'
+			-e 's/\(".*"\).*#.*$/\1/' \
+			-e 's/$/ \\/'
 }
 
 # Execute provided function for each of array elements.
