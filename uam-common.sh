@@ -101,13 +101,20 @@ getarray() {
 # Function should return false to break the loop, else true.
 
 foreach() {
-	local FUNC ARR MP
+	local FUNC ARR
 	ARR="$1"
 	FUNC="$2"
 
+	# pass max 4 args to the func
+	local ADDARGA ADDARGB ADDARGC ADDARGD
+	ADDARGA="$3"
+	ADDARGB="$4"
+	ADDARGC="$5"
+	ADDARGD="$6"
+
 	eval set -- "$(getarray "${ARR}")"
 	while [ $# -gt 0 ]; do
-		"${FUNC}" "$1" || break
+		"${FUNC}" "$1" "${ADDARGA}" "${ADDARGB}" "${ADDARGC}" "${ADDARGD}" || break
 		shift
 	done
 }
