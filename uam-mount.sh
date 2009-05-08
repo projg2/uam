@@ -85,6 +85,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 							return 0
 						fi
 
+						mkdir_parents "${SP}"
 						ln -s "${MP}" "${SP}"
 						if [ $? -eq 0 ]; then
 							debug "...... symlink created."

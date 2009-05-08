@@ -120,6 +120,17 @@ foreach() {
 	done
 }
 
+# Create parent directories whenever needed
+mkdir_parents() {
+	local PAR
+	PAR="${1%/*}"
+
+	if [ ! -d "${PAR}" ]; then
+		debug "...... trying to create ${PAR}"
+		mkdir -m "${PARENT_PERMS}" -p "${PAR}"
+	fi
+}
+
 # Create mountpoint if it doesn't exist.
 
 mp_create() {
@@ -127,9 +138,12 @@ mp_create() {
 	MP="$1"
 	NOTEFILE="${MP}/${MP_NOTEFN}"
 
+	# we need to call it instead of using 'mkdir -p' below
+	# because we want parents to have another permissions
+	mkdir_parents "${MP}"
 	if [ ! -d "${MP}" ]; then
 		debug "... trying to create ${MP}"
-		mkdir -p "${MP}"
+		mkdir -m "${MP_PERMS}" "${MP}"
 		touch "${NOTEFILE}"
 	fi
 }
