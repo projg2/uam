@@ -149,7 +149,7 @@ mp_create() {
 	if [ ! -d "${MP}" ]; then
 		debug "... trying to create ${MP}"
 		mkdir -m "${MP_PERMS}" "${MP}"
-		touch "${NOTEFILE}"
+		echo $$ > "${NOTEFILE}"
 	fi
 }
 
@@ -163,17 +163,70 @@ mp_remove() {
 	NOTEFILE="${MP}/${MP_NOTEFN}"
 
 	if [ -f "${NOTEFILE}" ]; then
+		# SUS doesn't allow us to use readlink
+		# so we need to do the symlink search first to find NOTEFILEs
+		mp_rmsymlinks "$(cat "${NOTEFILE}")"
+
 		rm "${NOTEFILE}"
 		rmdir "${MP}"
 		if [ $? -eq 0 ]; then
-			debug "...... successfully removed our mountpoint."
+			debug "...... successfully removed mp ${MP}."
 		else
 			# touch the file again, so if above rm succeeded and rmdir failed,
 			# we still will know that's our mountpoint
 			touch "${NOTEFILE}"
-			debug "...... unable to remove our mountpoint."
+			debug "...... unable to remove mp ${MP}."
 		fi
 	fi
+}
+
+# Calculate -maxdepth for given templates.
+
+mp_getmaxdepth() {
+	local DEPTH ARR
+	DEPTH="${CLEANUP_MAXDEPTH}"
+	ARR="$1"
+
+	if ! isint "${DEPTH}"; then
+		DEPTH=0
+		function mp_countslashes() {
+			local MP
+			MP="$(echo "$1" | tr -cd /)"
+			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
+
+			return 0
+		}
+
+		foreach "${ARR}" mp_countslashes
+	fi
+
+	echo $(( DEPTH + 1 ))
+}
+
+# Find and remove symlinks to mountpoint.
+
+mp_rmsymlinks() {
+	local UPID NOTEFILE
+	UPID="$1"
+	bool "${CLEANUP_SYMLINKS}" || return
+
+	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) \
+			-maxdepth $(mp_getmaxdepth "${SYMLINK_TEMPLATES}") \
+			-type l | while read D; do
+
+		# SUS - readlink's not there
+
+		NOTEFILE="${D}/${MP_NOTEFN}"
+		[ ! -f "${NOTEFILE}" ]					&& continue # not our symlink
+		[ "$(cat "${NOTEFILE}")" != "${UPID}" ]	&& continue # not this symlink
+
+		rm "${D}"
+		if [ $? -eq 0 ]; then
+			debug "...... successfully removed symlink ${D}."
+		else
+			debug "...... unable to remove symlink ${D}."
+		fi
+	done
 }
 
 # Remove unused mountpoints (useful if user umounts our devices himself).
@@ -181,24 +234,11 @@ mp_remove() {
 
 mp_cleanup() {
 	bool "${CLEANUP_ALLOW}" || return
+	local D MP MAXDEPTH
+	MAXDEPTH=$(mp_getmaxdepth "${MOUNTPOINT_TEMPLATES}")
 
-	local F MP D DEPTH
-	DEPTH="${CLEANUP_MAXDEPTH}"
-
-	if ! isint "${DEPTH}"; then
-		DEPTH=0
-		function mp_countslashes() {
-			MP="$(echo "${1%%/}" | tr -cd /)"
-			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
-
-			return 0
-		}
-
-		foreach "${MOUNTPOINT_TEMPLATES}" mp_countslashes
-	fi
-	: $(( DEPTH += 2 ))
-
-	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 -maxdepth ${DEPTH} \
+	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 \
+			-maxdepth $(( MAXDEPTH + 1 )) \
 			-name "${MP_NOTEFN}" -type f | while read F; do
 
 		D="$(dirname "${F}")"
