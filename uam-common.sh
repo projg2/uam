@@ -149,7 +149,7 @@ mp_create() {
 	if [ ! -d "${MP}" ]; then
 		debug "... trying to create ${MP}"
 		mkdir -m "${MP_PERMS}" "${MP}"
-		echo $$ > "${NOTEFILE}"
+		date -u "+%D %T $$" > "${NOTEFILE}"
 	fi
 }
 
