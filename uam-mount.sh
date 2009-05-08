@@ -31,6 +31,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			PARTN="${DEVBASENAME##*[^0-9]}"
 
 			try_mountpoint() {
+				local _MP MP MPDEV
 				_MP="$1"
 
 				[ -z "${_MP}" ] && return 0
@@ -57,6 +58,45 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 							exit 1
 						fi
 					fi
+
+					try_symlink() {
+						local _SP SP MP # SP = symlink point
+						_SP="$1"
+						MP="$2"
+
+						[ -z "${_SP}" ] && return 0
+						SP="${MOUNTPOINT_BASE}/${_SP%%/}"
+
+						debug "... trying symlink ${SP}"
+						if [ "${SP}" = "${MP}" ]; then
+							debug "...... skipping since we used it as a mountpoint."
+							return 0
+						elif [ -L "${SP}" ]; then
+							if [ -e "${SP}" ]; then
+								# XXX: check whether target is mounted and whether it's uam mountpoint
+								debug "...... skipping as it's working symlink."
+								return 0
+							else
+								debug "...... is a broken symlink, removing and reusing it."
+								rm -f "${SP}"
+							fi
+						elif [ -e "${SP}" ]; then
+							debug "...... skipping as it exists and is not a symlink."
+							return 0
+						fi
+
+						ln -s "${MP}" "${SP}"
+						if [ $? -eq 0 ]; then
+							debug "...... symlink created."
+						else
+							debug "...... symlink failed."
+						fi
+
+						return 0
+					}
+
+					foreach "${SYMLINK_TEMPLATES}" try_symlink "${MP}"
+
 					exit 0
 				else
 					debug "... mountpoint ${MP} already used for ${MPDEV}."
