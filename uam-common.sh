@@ -19,15 +19,20 @@ conf_read() {
 conf_read
 
 # Parse value of boolean variable.
+# If second arg is specified, it is printed if the value evalutes to true.
+# If third arg is specified, it is printed if the value evaluates to false.
 
 bool() {
 	case "$1" in
 		1|[yY]|[tT]|[yY][eE][sS]|[tT][rR][uU][eE]|[oO][nN])
+			[ -n "$2" ] && echo $2
 			return 0;;
 		0|[nN]|[fF]|[nN][oO]|[fF][aA][lL][sS][eE]|[oO][fF][fF])
+			[ -n "$3" ] && echo $3
 			return 1;;
 		*)
 			outmsg "Incorrect value in bool ($1), assuming false."
+			[ -n "$3" ] && echo $3
 			return 1;;
 	esac
 }
@@ -193,7 +198,7 @@ mp_cleanup() {
 	fi
 	: $(( DEPTH += 2 ))
 
-	find "${MOUNTPOINT_BASE}" -mindepth 2 -maxdepth ${DEPTH} \
+	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 -maxdepth ${DEPTH} \
 			-name "${MP_NOTEFN}" -type f | while read F; do
 
 		D="$(dirname "${F}")"
