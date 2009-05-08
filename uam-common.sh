@@ -35,7 +35,8 @@ bool() {
 # Check whether value is a correct integer.
 
 isint() {
-	local VAL="$1"
+	local VAL
+	VAL="$1"
 	
 	: $(( VAL *= 1 ))
 
@@ -99,8 +100,9 @@ mp_getall() {
 # Create mountpoint if it doesn't exist.
 
 mp_create() {
-	local MP="$1"
-	local NOTEFILE="${MP}/${MP_NOTEFN}"
+	local MP NOTEFILE
+	MP="$1"
+	NOTEFILE="${MP}/${MP_NOTEFN}"
 
 	if [ ! -d "${MP}" ]; then
 		debug "... trying to create ${MP}"
@@ -114,8 +116,9 @@ mp_create() {
 mp_remove() {
 	bool "${REMOVE_MOUNTPOINTS}" || return
 
-	local MP="$1"
-	local NOTEFILE="${MP}/${MP_NOTEFN}"
+	local MP NOTEFILE
+	MP="$1"
+	NOTEFILE="${MP}/${MP_NOTEFN}"
 
 	if [ -f "${NOTEFILE}" ]; then
 		rm "${NOTEFILE}"
@@ -137,8 +140,8 @@ mp_remove() {
 mp_cleanup() {
 	bool "${CLEANUP_ALLOW}" || return
 
-	local F MP D
-	local DEPTH="${CLEANUP_MAXDEPTH}"
+	local F MP D DEPTH
+	DEPTH="${CLEANUP_MAXDEPTH}"
 
 	if ! isint "${DEPTH}"; then
 		DEPTH=0
@@ -177,8 +180,8 @@ mp_find() {
 # set, uses global ones.
 
 get_mountopts() {
-	local FS="$(echo "$1" | tr a-z A-Z | tr -cd A-Z)"
-	local VAL
+	local FS VAL
+	FS="$(echo "$1" | tr a-z A-Z | tr -cd A-Z)"
 
 	[ -n "${FS}" ]	&& VAL="$(eval "echo \${MOUNT_OPTS_${FS}"})"
 	[ -z "${VAL}" ]	&& VAL="${MOUNT_OPTS}"
