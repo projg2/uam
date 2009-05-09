@@ -10,12 +10,9 @@ UDEV_RULES	= 10-uam.rules
 CONFIG		= uam.conf
 
 all:
-	@echo "There is no 'make', just 'make install' and have fun."
-
-clean:
 	true
 
-distclean:
+clean:
 	true
 
 install:
@@ -31,4 +28,4 @@ uninstall:
 	rm -f $(addprefix $(DESTDIR)$(CONFIGDIR)/,$(CONFIG))
 	rmdir -p --ignore-fail-on-non-empty $(DESTDIR)$(SCRIPTDIR) $(DESTDIR)$(CONFIGDIR) $(DESTDIR)$(RULESDIR)
 
-.PHONY: all clean distclean install uninstall
+.PHONY: all clean install uninstall
