@@ -3,8 +3,7 @@ uam TODO
 
 [for 0.0.2]
 	* support bash arrays once again,
-	* support newlines in paths:
-		- replace find|read with \n-friendly find.
+	* escape newlines and likes when outputting paths (?).
 
 [for 0.0.3]
 	* support mounting of removable drives like floppys and CDs.

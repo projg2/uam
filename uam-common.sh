@@ -233,13 +233,13 @@ mp_cleanup() {
 # Determine whether a mountpoint is used and print the device it is used by.
 
 mp_used() {
-	awk "\$2 == \"$1\" { print \$1 }" /proc/mounts
+	awk -f "${LIBDIR}/mounts.awk" -v mp="$1" /proc/mounts
 }
 
 # Determine whether a device is mounted and print the mountpoint it uses.
 
 mp_find() {
-	awk "\$1 == \"$1\" { print \$2 }" /proc/mounts
+	awk -f "${LIBDIR}/mounts.awk" -v dev="$1" /proc/mounts
 }
 
 # Gets MOUNT_OPTS correct for specific filesystem. If there are no specific opts
