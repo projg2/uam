@@ -1,11 +1,13 @@
 #!/bin/sh
 
+LIBDIR="$(dirname "$0")"
+
 # Read configuration
 
 conf_read() {
 	local D F
 
-	for D in "$(dirname "$0")" '/etc/udev'; do
+	for D in "${LIBDIR}" '/etc/udev'; do
 		F="${D}/uam.conf"
 		if [ -f "${F}" ]; then
 			. "${F}"
@@ -98,7 +100,7 @@ MP_NOTEFN=".created_by_uam"
 # Get processed array.
 
 getarray() {
-	echo "$1" | awk -f "$(dirname "$0")/array.awk"
+	echo "$1" | awk -f "${LIBDIR}/array.awk"
 }
 
 # Execute provided function for each of array elements.
@@ -210,21 +212,8 @@ mp_rmsymlinks() {
 
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) \
 			-maxdepth $(mp_getmaxdepth "${SYMLINK_TEMPLATES}") \
-			-type l | while read D; do
-
-		# SUS - readlink's not there
-
-		NOTEFILE="${D}/${MP_NOTEFN}"
-		[ ! -f "${NOTEFILE}" ]					&& continue # not our symlink
-		[ "$(cat "${NOTEFILE}")" != "${UPID}" ]	&& continue # not this symlink
-
-		rm "${D}"
-		if [ $? -eq 0 ]; then
-			debug "...... successfully removed symlink ${D}."
-		else
-			debug "...... unable to remove symlink ${D}."
-		fi
-	done
+			-type l \
+			-exec "${LIBDIR}/find-helper.sh" --remove-symlink '{}' ';'
 }
 
 # Remove unused mountpoints (useful if user umounts our devices himself).
@@ -237,13 +226,8 @@ mp_cleanup() {
 
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 \
 			-maxdepth $(( MAXDEPTH + 1 )) \
-			-name "${MP_NOTEFN}" -type f | while read F; do
-
-		D="$(dirname "${F}")"
-		MP="$(mp_used "${D}")"
-
-		[ -z "${MP}" ] && mp_remove "${D}"
-	done
+			-name "${MP_NOTEFN}" -type f \
+			-exec "${LIBDIR}/find-helper.sh" --remove-mountpoint '{}' ';'
 }
 
 # Determine whether a mountpoint is used and print the device it is used by.
