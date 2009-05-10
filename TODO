@@ -2,13 +2,10 @@ uam TODO
 
 
 [for 0.0.2]
-	* currently no ideas left in TODO.
+	* support bash arrays once again,
+	* support newlines in paths:
+		- replace find|read with \n-friendly find.
 
 [for 0.0.3]
 	* support mounting of removable drives like floppys and CDs.
-
-[for ?]
-	* support newlines in paths:
-		- enhance array splitting regexp,
-		- replace find|read with \n-friendly find.
 

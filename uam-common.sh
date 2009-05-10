@@ -98,9 +98,7 @@ MP_NOTEFN=".created_by_uam"
 # Get processed array.
 
 getarray() {
-	echo "$1" | sed -e '/^[[:space:]]*$/d' \
-			-e 's/\(".*"\).*#.*$/\1/' \
-			-e 's/$/ \\/'
+	echo "$1" | awk -f "$(dirname "$0")/array.awk"
 }
 
 # Execute provided function for each of array elements.

@@ -5,7 +5,7 @@ CONFIGDIR	= /etc/udev
 RULESDIR	= /etc/udev/rules.d
 
 SCRIPTS		= uam-mount.sh uam-umount.sh
-SCRIPTS_NX	= uam-common.sh
+SCRIPTS_NX	= uam-common.sh array.awk
 UDEV_RULES	= 10-uam.rules
 CONFIG		= uam.conf
 
