@@ -18,12 +18,11 @@ install:
 	cd "$(SRCDIR)" && install -m700 $(SCRIPTS) "$(DESTDIR)$(SCRIPTDIR)/"
 	cd "$(SRCDIR)" && install -m600 $(SCRIPTS_NX) "$(DESTDIR)$(SCRIPTDIR)/"
 	install -m600 $(UDEV_RULES) "$(DESTDIR)$(RULESDIR)/"
-	install -m600 $(CONFIG) "$(DESTDIR)$(CONFIGDIR)/"
+	[ -f "$(DESTDIR)$(CONFIGDIR)/$(CONFIG)" ] || install -m600 $(CONFIG) "$(DESTDIR)$(CONFIGDIR)/"
 
 uninstall:
 	cd "$(DESTDIR)$(SCRIPTDIR)" && rm -f $(SCRIPTS) $(SCRIPTS_NX)
 	cd "$(DESTDIR)$(RULESDIR)" && rm -f $(UDEV_RULES)
-	cd "$(DESTDIR)$(CONFIGDIR)" && rm -f $(CONFIG)
 	-rmdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(CONFIGDIR)" "$(DESTDIR)$(RULESDIR)"
 
 .PHONY: all clean install uninstall
