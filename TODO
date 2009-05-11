@@ -2,11 +2,12 @@ uam TODO
 
 
 [for 0.0.2]
-	* support bash arrays once again,
 	* replace silly lib/conf-search with hardcoded paths,
-	* determine Makefile portability and fix it,
 	* escape newlines and likes when outputting paths (?).
 
 [for 0.0.3]
 	* support mounting of removable drives like floppys and CDs.
+
+[possible sometime]
+	* support bash arrays once again,
 
