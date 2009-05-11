@@ -3,6 +3,8 @@ uam TODO
 
 [for 0.0.2]
 	* support bash arrays once again,
+	* replace silly lib/conf-search with hardcoded paths,
+	* determine Makefile portability and fix it,
 	* escape newlines and likes when outputting paths (?).
 
 [for 0.0.3]

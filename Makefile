@@ -4,6 +4,7 @@ SCRIPTDIR	= /lib/udev/uam
 CONFIGDIR	= /etc/udev
 RULESDIR	= /etc/udev/rules.d
 
+SRCDIR		= src
 SCRIPTS		= uam-mount.sh uam-umount.sh find-helper.sh
 SCRIPTS_NX	= uam-common.sh array.awk
 UDEV_RULES	= 10-uam.rules
@@ -17,8 +18,8 @@ clean:
 
 install:
 	mkdir -p $(DESTDIR)$(SCRIPTDIR) $(DESTDIR)$(CONFIGDIR) $(DESTDIR)$(RULESDIR)
-	install -m700 $(SCRIPTS) $(DESTDIR)$(SCRIPTDIR)/
-	install -m600 $(SCRIPTS_NX) $(DESTDIR)$(SCRIPTDIR)/
+	install -m700 $(addprefix $(SRCDIR)/,$(SCRIPTS)) $(DESTDIR)$(SCRIPTDIR)/
+	install -m600 $(addprefix $(SRCDIR)/,$(SCRIPTS_NX)) $(DESTDIR)$(SCRIPTDIR)/
 	install -m600 $(UDEV_RULES) $(DESTDIR)$(RULESDIR)/
 	install -m600 $(CONFIG) $(DESTDIR)$(CONFIGDIR)/
 

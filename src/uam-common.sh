@@ -7,7 +7,7 @@ LIBDIR="$(dirname "$0")"
 conf_read() {
 	local D F
 
-	for D in "${LIBDIR}" '/etc/udev'; do
+	for D in "${LIBDIR}" "${LIBDIR}/.." '/etc/udev'; do
 		F="${D}/uam.conf"
 		if [ -f "${F}" ]; then
 			. "${F}"
