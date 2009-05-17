@@ -1,6 +1,8 @@
 #!/bin/sh
 
-. "$(dirname "$0")/uam-common.sh"
+LIBDIR="$(dirname "$0")"
+
+. "${LIBDIR}"/uam-common.sh
 
 DEVPATH="${DEVNAME:-$1}"
 

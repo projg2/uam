@@ -3,7 +3,9 @@
 
 [ $# -ge 1 ] || exit 1
 
-. "$(dirname "$0")/uam-common.sh"
+LIBDIR="$(dirname "$0")"
+
+. "${LIBDIR}"/uam-common.sh
 
 case "$1" in
 	--remove-mountpoint)

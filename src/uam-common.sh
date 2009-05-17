@@ -1,6 +1,7 @@
 #!/bin/sh
 
-LIBDIR="$(dirname "$0")"
+# LIBDIR should be declared by caller
+[ -z "${LIBDIR}" ] && exit 1
 
 # Read configuration
 
