@@ -10,7 +10,7 @@ RULESDIR	= /etc/udev/rules.d
 BUILDDIR	= build
 SRCDIR		= src
 
-SCRIPTS_NX	= uam-common.sh array.awk mounts.awk
+SCRIPTS_NX	= array.awk mounts.awk
 CONFIG		= uam.conf
 
 XMOD		= 0700

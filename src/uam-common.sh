@@ -3,20 +3,12 @@
 # LIBDIR should be declared by caller
 [ -z "${LIBDIR}" ] && exit 1
 
+CONFDIR="${LIBDIR}"/..
+
 # Read configuration
 
 conf_read() {
-	local D F
-
-	for D in "${LIBDIR}" "${LIBDIR}/.." '/etc/udev'; do
-		F="${D}/uam.conf"
-		if [ -f "${F}" ]; then
-			. "${F}"
-			return 0
-		fi
-	done
-
-	return 1
+	. "${CONFDIR}"/uam.conf
 }
 
 conf_read
