@@ -7,6 +7,10 @@
 
 CONFDIR="${LIBDIR}"/..
 
+# Currently not used, only for informational purposes
+# Empty means we're using SVN trunk
+VERSION=
+
 # Read configuration
 
 conf_read() {

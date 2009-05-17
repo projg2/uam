@@ -7,6 +7,8 @@ RULESDIR	= /etc/udev/rules.d
 
 # End of simple config, you shall not pass below
 
+VERSION		= 
+
 BUILDDIR	= build
 SRCDIR		= src
 
@@ -17,7 +19,7 @@ XMOD		= 0700
 FMOD		= 0600
 
 all:
-	cd "$(BUILDDIR)" && make $(MAKEFLAGS) \
+	cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" \
 		SCRIPTDIR="$(SCRIPTDIR)" CONFIGDIR="$(CONFIGDIR)" RULESDIR="$(RULESDIR)"
 
 clean:
