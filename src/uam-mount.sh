@@ -1,4 +1,6 @@
 #!/bin/sh
+# uam - mount
+# (c) 2008/09 Michał Górny
 
 LIBDIR="$(dirname "$0")"
 

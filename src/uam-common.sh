@@ -1,4 +1,6 @@
 #!/bin/sh
+# uam - common functions
+# (c) 2008/09 Michał Górny
 
 # LIBDIR should be declared by caller
 [ -z "${LIBDIR}" ] && exit 1

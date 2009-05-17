@@ -1,5 +1,6 @@
 #!/bin/sh
-# Helper used for find -exec.
+# uam - helper for 'find -exec'
+# (c) 2009 Michał Górny
 
 [ $# -ge 1 ] || exit 1
 

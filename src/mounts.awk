@@ -1,3 +1,6 @@
+# /proc/mounts parsing with escapes support
+# (c) 2009 Michał Górny
+
 function unescape(str) {
 	gsub(/\\012/, "\n", str)
 	gsub(/\\040/, " ", str)

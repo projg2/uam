@@ -1,3 +1,6 @@
+# bash-alike array processing
+# (c) 2009 Michał Górny
+
 BEGIN {
 	ORS = ""
 
