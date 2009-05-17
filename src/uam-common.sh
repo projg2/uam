@@ -54,9 +54,26 @@ under_udev() {
 
 outmsg() {
 	if under_udev; then
-		logger -p info -t "$(basename "$0")[${DEVNAME}]" "$@"
+		local IDENT PRIO
+
+		IDENT="$(basename "$0")[${DEVNAME}]"
+		PRIO=info
+
+		logger -p ${PRIO} -t "${IDENT}" "$(echo $@)"
+		case $? in
+			0)
+				;;
+			126|127)
+				# no 'logger' util
+				# try fallbacking to perl
+				echo $@ | perl -MSys::Syslog -e "undef $/; openlog('${IDENT}'); syslog('${PRIO}', <>);"
+				;;
+			default)
+				# syntax error? try SUS-compliant one
+				logger "$(echo $@)"
+		esac
 	else
-		echo "$@" >&2
+		echo "$(echo $@)" >&2
 	fi
 }
 
