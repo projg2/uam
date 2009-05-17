@@ -1,6 +1,6 @@
 udev-based automounter (uam)
 (C) 2008 Michał Górny
-Licensed under the terms of GPL2
+Released under the terms of 3-clause BSD license
 
 
 == INTRO
@@ -25,6 +25,12 @@ be fine when they remove the disk (uam will unmount it then) or use pmount.
 
 == INSTALLING
 
+If you're using Gentoo, you'd probably like to use ebuild from my overlay:
+# layman -o http://svn.mgorny.alt.pl/emdzientoo/trunk/layman.xml -a emdzientoo
+# emerge uam
+
+Else, you can install it manually:
+$ make
 # make install
 ...and you're done. The scripts will be installed in /lib/udev/uam/, config file
 will be located in /etc/udev and rules file in /etc/udev/rules.d/.

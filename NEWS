@@ -4,7 +4,8 @@ uam NEWS
 uam-0.0.2:
 	* SUSv3 compatibility, bash no longer required,
 	* mountpoint symlink creation and cleanup support,
-	* support for newlines in paths.
+	* support for newlines and other special characters  in paths,
+	* real support for changing installation paths.
 
 uam-0.0.1:
 	* basic automounter with extensive cleanup support,
