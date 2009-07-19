@@ -196,6 +196,16 @@ mp_remove() {
 	fi
 }
 
+# Count slashes in arg and increase ${DEPTH} if needed
+
+_mp_countslashes() {
+	local MP
+	MP="$(echo "$1" | tr -cd /)"
+	[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
+
+	return 0
+}
+
 # Calculate -maxdepth for given templates.
 
 mp_getmaxdepth() {
@@ -205,15 +215,7 @@ mp_getmaxdepth() {
 
 	if ! isint "${DEPTH}"; then
 		DEPTH=0
-		function mp_countslashes() {
-			local MP
-			MP="$(echo "$1" | tr -cd /)"
-			[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
-
-			return 0
-		}
-
-		foreach "${ARR}" mp_countslashes
+		foreach "${ARR}" _mp_countslashes
 	fi
 
 	echo $(( DEPTH + 1 ))
