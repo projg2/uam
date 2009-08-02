@@ -23,8 +23,8 @@ case "$1" in
 
 		D="$2"
 		NOTEFILE="${D}/${MP_NOTEFN}"
-		[ ! -f "${NOTEFILE}" ]					&& continue # not our symlink
-		[ "$(cat "${NOTEFILE}")" != "${UPID}" ]	&& continue # not this symlink
+		[ ! -f "${NOTEFILE}" ]					&& exit 1 # not our symlink
+		[ "$(cat "${NOTEFILE}")" != "${UPID}" ]	&& exit 1 # not this symlink
 
 		rm "${D}"
 		if [ $? -eq 0 ]; then
