@@ -17,6 +17,7 @@ CONFIG		= uam.conf
 
 XMOD		= 0700
 FMOD		= 0600
+DMASK		= 0077
 
 all:
 	cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" \
@@ -26,11 +27,14 @@ clean:
 	cd "$(BUILDDIR)" && make $(MAKEFLAGS) clean
 
 install:
-	cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" XMOD=$(XMOD) FMOD=$(FMOD) \
-		SCRIPTDIR="$(SCRIPTDIR)" CONFIGDIR="$(CONFIGDIR)" RULESDIR="$(RULESDIR)" install
-	mkdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(CONFIGDIR)"
-	cd "$(SRCDIR)" && install -m$(FMOD) $(SCRIPTS_NX) "$(DESTDIR)$(SCRIPTDIR)/"
-	[ -f "$(DESTDIR)$(CONFIGDIR)/$(CONFIG)" ] || install -m$(FMOD) $(CONFIG) "$(DESTDIR)$(CONFIGDIR)/"
+	cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" XMOD=$(XMOD) \
+		FMOD=$(FMOD) DMASK=$(DMASK) SCRIPTDIR="$(SCRIPTDIR)" \
+		CONFIGDIR="$(CONFIGDIR)" RULESDIR="$(RULESDIR)" install
+	umask $(DMASK); mkdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(CONFIGDIR)"
+	cd "$(SRCDIR)" && cp $(SCRIPTS_NX) "$(DESTDIR)$(SCRIPTDIR)/"
+	cd "$(DESTDIR)$(SCRIPTDIR)" && chmod $(FMOD) $(SCRIPTS_NX)
+	[ -f "$(DESTDIR)$(CONFIGDIR)/$(CONFIG)" ] || cp $(CONFIG) "$(DESTDIR)$(CONFIGDIR)/"
+	cd "$(DESTDIR)$(CONFIGDIR)" && chmod $(FMOD) $(CONFIG)
 
 uninstall:
 	-cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" \

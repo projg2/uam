@@ -24,10 +24,12 @@ clean:
 	rm -f $(SCRIPTS) $(SCRIPTS_NX) $(UDEV_RULES)
 
 install: all
-	mkdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(RULESDIR)"
-	install -m$(XMOD) $(SCRIPTS) "$(DESTDIR)$(SCRIPTDIR)/"
-	install -m$(FMOD) $(SCRIPTS_NX) "$(DESTDIR)$(SCRIPTDIR)/"
-	install -m$(FMOD) $(UDEV_RULES) "$(DESTDIR)$(RULESDIR)/"
+	umask $(DMASK); mkdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(RULESDIR)"
+	cp $(SCRIPTS) $(SCRIPTS_NX) "$(DESTDIR)$(SCRIPTDIR)/"
+	cd "$(DESTDIR)$(SCRIPTDIR)" && chmod $(FMOD) $(SCRIPTS_NX)
+	cd "$(DESTDIR)$(SCRIPTDIR)" && chmod $(XMOD) $(SCRIPTS)
+	cp $(UDEV_RULES) "$(DESTDIR)$(RULESDIR)/"
+	cd "$(DESTDIR)$(RULESDIR)" && chmod $(FMOD) $(UDEV_RULES)
 
 uninstall:
 	-cd "$(DESTDIR)$(SCRIPTDIR)" && rm -f $(SCRIPTS) $(SCRIPTS_NX)
