@@ -1,6 +1,9 @@
 uam NEWS
 
 
+uam-0.0.3:
+	* compatibility with new udev versions.
+
 uam-0.0.2:
 	* SUSv3 compatibility, bash no longer required,
 	* mountpoint symlink creation and cleanup support,
