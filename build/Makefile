@@ -4,7 +4,7 @@ SRCDIR		= ../src
 SCRIPTS		= uam-mount.sh uam-umount.sh find-helper.sh
 SCRIPTS_NX	= uam-common.sh
 
-UDEV_RULES	= 10-uam.rules
+UDEV_RULES	= 80-uam.rules
 DEFLIBDIR	= /lib/udev/uam
 
 all: $(SCRIPTS) $(SCRIPTS_NX) $(UDEV_RULES)

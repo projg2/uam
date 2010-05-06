@@ -1,2 +1,0 @@
-SUBSYSTEM=="block", ACTION=="add", SUBSYSTEMS=="usb", ENV{DEVTYPE}=="partition", RUN+="/lib/udev/uam/uam-mount.sh"
-SUBSYSTEM=="block", ACTION=="remove", ENV{DEVTYPE}=="partition", RUN+="/lib/udev/uam/uam-umount.sh"
