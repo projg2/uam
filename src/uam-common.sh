@@ -100,7 +100,14 @@ summary() {
 env_populate() {
 	# udev already does this for us
 	if ! under_udev; then
-		__ENV="$(/lib/udev/vol_id --export "${DEVPATH}")"
+		local __ENV RET
+		if [ -x /sbin/blkid ]; then
+			__ENV="$(/sbin/blkid -o udev "${DEVPATH}")"
+		elif [ -x /lib/udev/vol_id ]; then
+			__ENV="$(/lib/udev/vol_id --export "${DEVPATH}")"
+		else
+			false
+		fi
 
 		if [ $? -eq 0 ]; then
 			eval "${__ENV}"
