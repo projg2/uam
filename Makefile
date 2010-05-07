@@ -16,9 +16,9 @@ SRCDIR		= src
 SCRIPTS_NX	= array.awk mounts.awk
 CONFIG		= uam.conf
 
-XMOD		= 0700
-FMOD		= 0600
-DMASK		= 0077
+XMOD		= 0755
+FMOD		= 0644
+DMASK		= 0022
 
 all:
 	cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" LIBDIR="$(LIBDIR)" \
