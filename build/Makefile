@@ -13,6 +13,7 @@ all: $(SCRIPTS) $(SCRIPTS_NX) $(UDEV_RULES)
 %.sh:
 	sed -e 's:^\(LIBDIR=\).*$$:\1'"'"'$(SCRIPTDIR)'"':" \
 		-e 's:^\(CONFDIR=\).*$$:\1'"'"'$(CONFIGDIR)'"':" \
+		-e 's:^\(SYSLIBDIR=\).*$$:\1'"'"'$(LIBDIR)'"':" \
 		-e 's:^\(VERSION=\).*$$:\1$(VERSION):' \
 		"$(SRCDIR)/$@" > "$@"
 

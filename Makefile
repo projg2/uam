@@ -1,7 +1,8 @@
 # Below variables are to be modified or overriden
 
 DESTDIR		= 
-SCRIPTDIR	= /lib/udev/uam
+LIBDIR		= /lib
+SCRIPTDIR	= $(LIBDIR)/udev/uam
 CONFIGDIR	= /etc/udev
 RULESDIR	= /etc/udev/rules.d
 
@@ -20,7 +21,7 @@ FMOD		= 0600
 DMASK		= 0077
 
 all:
-	cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" \
+	cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" LIBDIR="$(LIBDIR)" \
 		SCRIPTDIR="$(SCRIPTDIR)" CONFIGDIR="$(CONFIGDIR)" RULESDIR="$(RULESDIR)"
 
 clean:

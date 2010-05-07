@@ -7,6 +7,9 @@
 
 CONFDIR="${LIBDIR}"/..
 
+# Real system libdir
+SYSLIBDIR=/lib
+
 # Currently not used, only for informational purposes
 # Empty means we're using SVN trunk
 VERSION=
@@ -103,8 +106,8 @@ env_populate() {
 		local __ENV RET
 		if [ -x /sbin/blkid ]; then
 			__ENV="$(/sbin/blkid -o udev "${DEVPATH}")"
-		elif [ -x /lib/udev/vol_id ]; then
-			__ENV="$(/lib/udev/vol_id --export "${DEVPATH}")"
+		elif [ -x "${SYSLIBDIR}"/udev/vol_id ]; then
+			__ENV="$("${SYSLIBDIR}"/udev/vol_id --export "${DEVPATH}")"
 		else
 			false
 		fi
