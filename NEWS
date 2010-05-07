@@ -1,6 +1,10 @@
 uam NEWS
 
 
+uam-0.0.4:
+	* support for non-partitioned block devices,
+	* fixes regarding udev support.
+
 uam-0.0.3:
 	* compatibility with new udev versions.
 

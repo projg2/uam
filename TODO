@@ -1,9 +1,7 @@
 uam TODO
 
 
-[for 0.0.4]
-	* support mounting of removable drives like floppys and CDs.
-
 [possible sometime]
 	* support bash arrays once again,
+	* support mounting of removable drives like floppys and CDs.
 
