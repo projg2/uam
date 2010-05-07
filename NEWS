@@ -3,7 +3,8 @@ uam NEWS
 
 uam-0.0.4:
 	* support for non-partitioned block devices,
-	* fixes regarding udev support.
+	* fixes regarding udev support,
+	* support for setting an alternate LIBDIR (e.g. /lib64).
 
 uam-0.0.3:
 	* compatibility with new udev versions.
