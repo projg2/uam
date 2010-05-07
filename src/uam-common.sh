@@ -22,6 +22,16 @@ conf_read() {
 
 conf_read
 
+# Declare local() function if shell doesn't support 'local' builtin.
+
+local_supported() {
+	local test 2>/dev/null
+}
+
+local_supported || eval 'local() {
+	:
+}'
+
 # Parse value of boolean variable.
 # If second arg is specified, it is printed if the value evalutes to true.
 # If third arg is specified, it is printed if the value evaluates to false.
