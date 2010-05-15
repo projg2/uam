@@ -27,15 +27,15 @@ FMOD		= 0644
 DMASK		= 0022
 
 all:
-	cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" LIBDIR="$(LIBDIR)" \
+	+cd "$(BUILDDIR)" && make $(MAKEFLAGS) VERSION="$(VERSION)" LIBDIR="$(LIBDIR)" \
 		SCRIPTDIR="$(SCRIPTDIR)" CONFIGDIR="$(CONFIGDIR)" RULESDIR="$(RULESDIR)" \
 		HOOKDIR="$(HOOKDIR)"
 
 clean:
-	cd "$(BUILDDIR)" && make $(MAKEFLAGS) clean
+	+cd "$(BUILDDIR)" && make $(MAKEFLAGS) clean
 
 install:
-	cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" XMOD=$(XMOD) \
+	+cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" XMOD=$(XMOD) \
 		FMOD=$(FMOD) DMASK=$(DMASK) SCRIPTDIR="$(SCRIPTDIR)" \
 		CONFIGDIR="$(CONFIGDIR)" RULESDIR="$(RULESDIR)" install
 	umask $(DMASK); mkdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(CONFIGDIR)"; \
@@ -55,7 +55,7 @@ install:
 	cd "$(DESTDIR)$(HOOKDIR)"/mount-failed && chmod $(FMOD) $(HOOK_MFAIL)
 
 uninstall:
-	-cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" \
+	-+cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" \
 		SCRIPTDIR="$(SCRIPTDIR)" RULESDIR="$(RULESDIR)" uninstall
 	-cd "$(DESTDIR)$(SCRIPTDIR)" && rm -f $(SCRIPTS_NX)
 	-rmdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(CONFIGDIR)"
