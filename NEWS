@@ -1,6 +1,11 @@
 uam NEWS
 
 
+uam-0.0.5:
+	* support for hooks,
+	* sw-notify-send notification support (through supplied hooks),
+	* minor error handling fixes.
+
 uam-0.0.4:
 	* support for non-partitioned block devices,
 	* fixes regarding udev support,
