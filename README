@@ -1,6 +1,6 @@
 udev-based automounter (uam)
-(C) 2008/09 Michał Górny
-Released under the terms of 3-clause BSD license
+(C) 2008-2010 Michał Górny
+Released under the terms of the 3-clause BSD license
 
 
 == INTRO
@@ -46,7 +46,35 @@ file. If you're sure everything is set right, contact me and I'll see what I can
 do for you.
 
 
+== HOOK SUPPORT
+
+As of version 0.0.5, uam supports 'hooks' -- user-provided scripts which are
+sourced when specific conditions occur. These can be used to alter the device
+information, support additional notification methods, etc.
+
+The hook scripts are to be contained in ${HOOKDIR} subdirectories (defaulting
+to /etc/udev/uam-hooks/) and are sourced using the dot operator (called 'source'
+in bash too). This means they have full access to the environment of uam
+(and thus they can alter its' variables) but they should avoid calling builtins
+like 'exit', 'exec', 'return' and similar in the outer scope (as that would
+cause exiting uam).
+
+The following hook types (which are subdirectory names too) are supported:
+1) pre-mount -- called after getting the basic device information but before
+the mounting procedure starts. They can be used to alter both device information
+and uam configuration for specific devices.
+2) post-mount -- called after device is successfully mounted. These can be used
+to notify the user or update the environment.
+3) mount-failed -- called whenever uam has tried all possible mountpoints and
+was unable to mount a particular device.
+4) pre-umount -- called after getting the mountpoint for a particular device
+but before starting the unmount procedure. These scripts could alter
+the mountpoint but is it useful at all?
+5) post-umount -- called after successful or unsuccessful umount. The SUMMARY
+environment variable can be used to get the umount result-message.
+
+
 == CONTACT
 
-http://mgorny.alt.pl/contact/
+http://mgorny.alt.pl/contact.html
 
