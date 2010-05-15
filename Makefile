@@ -13,10 +13,14 @@ VERSION		= 0.0.4
 
 BUILDDIR	= build
 SRCDIR		= src
+SRCHOOKDIR	= uam-hooks
 
 SCRIPTS_NX	= array.awk mounts.awk
 CONFIG		= uam.conf
 HOOK_DIRS	= pre-mount post-mount mount-failed pre-umount post-umount
+HOOK_POSTM	= 90_sw_notify
+HOOK_POSTU	= 90_sw_notify
+HOOK_MFAIL	= 90_sw_notify
 
 XMOD		= 0755
 FMOD		= 0644
@@ -37,9 +41,18 @@ install:
 	umask $(DMASK); mkdir -p "$(DESTDIR)$(SCRIPTDIR)" "$(DESTDIR)$(CONFIGDIR)"; \
 		for _dir in $(HOOK_DIRS); do mkdir -p "$(DESTDIR)$(HOOKDIR)"/$${_dir}; done
 	cd "$(SRCDIR)" && cp $(SCRIPTS_NX) "$(DESTDIR)$(SCRIPTDIR)/"
+	
+	cd "$(SRCHOOKDIR)"/post-mount && cp $(HOOK_POSTM) "$(DESTDIR)$(HOOKDIR)"/post-mount/
+	cd "$(SRCHOOKDIR)"/post-umount && cp $(HOOK_POSTU) "$(DESTDIR)$(HOOKDIR)"/post-umount/
+	cd "$(SRCHOOKDIR)"/mount-failed && cp $(HOOK_MFAIL) "$(DESTDIR)$(HOOKDIR)"/mount-failed/
+
 	cd "$(DESTDIR)$(SCRIPTDIR)" && chmod $(FMOD) $(SCRIPTS_NX)
 	[ -f "$(DESTDIR)$(CONFIGDIR)/$(CONFIG)" ] || cp $(CONFIG) "$(DESTDIR)$(CONFIGDIR)/"
 	cd "$(DESTDIR)$(CONFIGDIR)" && chmod $(FMOD) $(CONFIG)
+
+	cd "$(DESTDIR)$(HOOKDIR)"/post-mount && chmod $(FMOD) $(HOOK_POSTM)
+	cd "$(DESTDIR)$(HOOKDIR)"/post-umount && chmod $(FMOD) $(HOOK_POSTU)
+	cd "$(DESTDIR)$(HOOKDIR)"/mount-failed && chmod $(FMOD) $(HOOK_MFAIL)
 
 uninstall:
 	-cd "$(BUILDDIR)" && make $(MAKEFLAGS) DESTDIR="$(DESTDIR)" \
