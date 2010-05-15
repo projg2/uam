@@ -18,6 +18,7 @@ debug "Starting uam umounter on ${DEVPATH}."
 # We (try to) umount all mounts (not only ours), because the device will be unavailable anyway
 
 MP="$(mp_find "${DEVPATH}")"
+hook_exec pre-umount
 
 if [ -n "${MP}" ]; then
 	debug "... found ${DEVPATH} mounted in ${MP}, trying to umount."
@@ -47,6 +48,8 @@ if [ -n "${MP}" ]; then
 			summary "umount failed."
 		fi
 	fi
+	
+	hook_exec post-umount
 else
 	debug "... not mounted."
 	# it is possible that user umounted the fs him/herself, so cleanup the mountpoints

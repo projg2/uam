@@ -16,6 +16,7 @@ fi
 debug "Starting uam mounter on ${DEVPATH}."
 
 env_populate
+hook_exec pre-mount
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then
 	# 1) try to mount using fstab, this way we also determine if it's already mounted
@@ -102,6 +103,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 
 					foreach "${SYMLINK_TEMPLATES}" try_symlink "${MP}"
 
+					hook_exec post-mount
 					exit 0
 				else
 					debug "... mountpoint ${MP} already used for ${MPDEV}."
@@ -114,6 +116,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 
 			debug "... no more mountpoints, failing."
 			summary "unable to find free mountpoint."
+			hook_exec mount-failed
 			exit 1
 		;;
 	esac

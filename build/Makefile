@@ -14,6 +14,7 @@ all: $(SCRIPTS) $(SCRIPTS_NX) $(UDEV_RULES)
 	sed -e 's:^\(LIBDIR=\).*$$:\1'"'"'$(SCRIPTDIR)'"':" \
 		-e 's:^\(CONFDIR=\).*$$:\1'"'"'$(CONFIGDIR)'"':" \
 		-e 's:^\(SYSLIBDIR=\).*$$:\1'"'"'$(LIBDIR)'"':" \
+		-e 's:^\(HOOKDIR=\).*$$:\1'"'"'$(HOOKDIR)'"':" \
 		-e 's:^\(VERSION=\).*$$:\1$(VERSION):' \
 		"$(SRCDIR)/$@" > "$@"
 

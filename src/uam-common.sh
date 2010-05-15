@@ -10,6 +10,9 @@ CONFDIR="${LIBDIR}"/..
 # Real system libdir
 SYSLIBDIR=/lib
 
+# The directory with hooks
+HOOKDIR="${CONFDIR}"/uam-hooks
+
 # Currently not used, only for informational purposes
 # Empty means we're using SVN trunk
 VERSION=
@@ -169,6 +172,25 @@ mkdir_parents() {
 	if [ ! -d "${PAR}" ]; then
 		debug "...... trying to create ${PAR}"
 		mkdir -m "${PARENT_PERMS}" -p "${PAR}"
+	fi
+}
+
+# Evaluate the particular type of hooks. Please notice that in order to be able
+# to modify certain environment variables, hooks are being executed through
+# '.' (AKA 'source'). This means they should avoid 'exit', 'exec' and similar
+# calls.
+
+hook_exec() {
+	local hooktype fn
+	hooktype="$1"
+
+	if [ -d "${HOOKDIR}"/"${hooktype}" ]; then
+		for fn in "${HOOKDIR}"/"${hooktype}"/*; do
+			if [ -f "${fn}" ]; then
+				debug "... ${hooktype}: evaluating $(basename "${fn}")"
+				. "${fn}"
+			fi
+		done
 	fi
 }
 
