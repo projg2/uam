@@ -108,6 +108,7 @@ debug() {
 # Output msg using outmsg() when ${VERBOSE} is off.
 
 summary() {
+	SUMMARY="$@"
 	bool "${VERBOSE}" || outmsg "$@"
 }
 
