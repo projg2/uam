@@ -50,17 +50,19 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 						debug "...... unable to create mountpoint, trying another one."
 						return 0
 					else
+						local mountoutput
 						debug "... mountpoint ${MP} free, using it."
-						mount -o "$(get_mountopts "${ID_FS_TYPE}")" "${DEVPATH}" "${MP}"
+						mountoutput="$(mount -o "$(get_mountopts "${ID_FS_TYPE}")" "${DEVPATH}" "${MP}" 2>&1)"
 
 						if [ $? -eq 0 ]; then
 							debug "...... mount successful."
 							summary "mounted successfully in ${MP}."
 						else
-							debug "...... mount failed."
-							summary "unable to mount."
+							debug "...... mount failed: ${mountoutput}."
+							summary "mount failed: ${mountoutput}."
 							# maybe we've created a mountpoint already
 							mp_remove "${MP}"
+							hook_exec mount-failed
 							exit 1
 						fi
 					fi
