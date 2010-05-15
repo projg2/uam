@@ -48,6 +48,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 
 					if [ ! -d "${MP}" ]; then
 						debug "...... unable to create mountpoint, trying another one."
+						return 0
 					else
 						debug "... mountpoint ${MP} free, using it."
 						mount -o "$(get_mountopts "${ID_FS_TYPE}")" "${DEVPATH}" "${MP}"
