@@ -75,7 +75,7 @@ try_mountpoint() {
 			fi
 		fi
 
-		foreach "${SYMLINK_TEMPLATES}" try_symlink "${MP}"
+		foreach SYMLINK_TEMPLATES try_symlink "${MP}"
 
 		hook_exec post-mount
 		exit 0
@@ -111,7 +111,7 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			summary "ignoring, already mounted!";;
 		*)
 			# 2) find a free mountpoint for it
-			foreach "${MOUNTPOINT_TEMPLATES}" try_mountpoint
+			foreach MOUNTPOINT_TEMPLATES try_mountpoint
 
 			debug "... no more mountpoints, failing."
 			summary "unable to find free mountpoint."

@@ -150,8 +150,8 @@ getarray() {
 # Function should return false to break the loop, else true.
 
 foreach() {
-	local FUNC ARR
-	ARR="$1"
+	local FUNC arrname
+	arrname="$1"
 	FUNC="$2"
 
 	# pass max 4 args to the func
@@ -161,7 +161,7 @@ foreach() {
 	ADDARGC="$5"
 	ADDARGD="$6"
 
-	eval set -- "$(getarray "${ARR}")"
+	eval set -- "$(eval getarray '"${'${arrname}'}"')"
 	while [ $# -gt 0 ]; do
 		"${FUNC}" "$1" "${ADDARGA}" "${ADDARGB}" "${ADDARGC}" "${ADDARGD}" || break
 		shift
@@ -255,13 +255,13 @@ _mp_countslashes() {
 # Calculate -maxdepth for given templates.
 
 mp_getmaxdepth() {
-	local DEPTH ARR
+	local DEPTH arrname
 	DEPTH="${CLEANUP_MAXDEPTH}"
-	ARR="$1"
+	arrname="$1"
 
 	if ! isint "${DEPTH}"; then
 		DEPTH=0
-		foreach "${ARR}" _mp_countslashes
+		foreach ${arrname} _mp_countslashes
 	fi
 
 	echo $(( DEPTH + 1 ))
@@ -275,7 +275,7 @@ mp_rmsymlinks() {
 	bool "${CLEANUP_SYMLINKS}" || return
 
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) \
-			-maxdepth $(mp_getmaxdepth "${SYMLINK_TEMPLATES}") \
+			-maxdepth $(mp_getmaxdepth SYMLINK_TEMPLATES) \
 			-type l \
 			-exec "${LIBDIR}/find-helper.sh" --remove-symlink '{}' ';'
 }
@@ -286,7 +286,7 @@ mp_rmsymlinks() {
 mp_cleanup() {
 	bool "${CLEANUP_ALLOW}" || return
 	local D MP MAXDEPTH
-	MAXDEPTH=$(mp_getmaxdepth "${MOUNTPOINT_TEMPLATES}")
+	MAXDEPTH=$(mp_getmaxdepth MOUNTPOINT_TEMPLATES)
 
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 \
 			-maxdepth $(( MAXDEPTH + 1 )) \
