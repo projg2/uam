@@ -161,7 +161,25 @@ foreach() {
 	ADDARGC="$5"
 	ADDARGD="$6"
 
-	eval set -- "$(eval getarray '"${'${arrname}'}"')"
+	local isarray
+
+	isarray=0
+	if [ -n "${BASH_VERSION}" ]; then
+		local arrtest
+		arrtest="$(declare -p ${arrname})"
+
+		if [ -n "${arrtest}" ]; then
+			# at this point we can really assume shell is bash
+			[[ "${arrtest}" == 'declare -a'* ]] && isarray=1
+		fi
+	fi
+
+	if [ ${isarray} -eq 1 ]; then
+		eval set -- '"${'${arrname}'[@]}"'
+	else
+		eval set -- "$(eval getarray '"${'${arrname}'}"')"
+	fi
+
 	while [ $# -gt 0 ]; do
 		"${FUNC}" "$1" "${ADDARGA}" "${ADDARGB}" "${ADDARGC}" "${ADDARGD}" || break
 		shift
