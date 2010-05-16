@@ -18,6 +18,7 @@ debug "Starting uam umounter on ${DEVPATH}."
 # We (try to) umount all mounts (not only ours), because the device will be unavailable anyway
 
 MP="$(mp_find "${DEVPATH}")"
+conf_read
 hook_exec pre-umount
 
 if [ -n "${MP}" ]; then

@@ -96,6 +96,7 @@ fi
 debug "Starting uam mounter on ${DEVPATH}."
 
 env_populate
+conf_read
 hook_exec pre-mount
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then

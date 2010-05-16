@@ -23,8 +23,6 @@ conf_read() {
 	. "${CONFDIR}"/uam.conf
 }
 
-conf_read
-
 # Declare local() function if shell doesn't support 'local' builtin.
 
 local_supported() {
