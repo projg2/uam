@@ -111,10 +111,6 @@ if [ "${ID_FS_TYPE}" != "swap" ]; then
 			summary "ignoring, already mounted!";;
 		*)
 			# 2) find a free mountpoint for it
-			DEVBASENAME="$(basename "${DEVPATH}")"
-			SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
-			PARTN="${DEVBASENAME##*[^0-9]}"
-
 			foreach "${MOUNTPOINT_TEMPLATES}" try_mountpoint
 
 			debug "... no more mountpoints, failing."

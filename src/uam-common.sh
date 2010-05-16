@@ -131,6 +131,11 @@ env_populate() {
 			exit 1
 		fi
 	fi
+
+	# uam-specific variables
+	DEVBASENAME="$(basename "${DEVPATH}")"
+	SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
+	PARTN="${DEVBASENAME##*[^0-9]}"
 }
 
 MP_NOTEFN=".created_by_uam"
