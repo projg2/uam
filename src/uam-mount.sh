@@ -89,15 +89,16 @@ try_mountpoint() {
 DEVPATH="${DEVNAME:-$1}"
 
 if [ -z "${DEVPATH}" ]; then
+	conf_read
 	debug "No device supplied."
 	exit 1
 fi
 
-debug "Starting uam mounter on ${DEVPATH}."
-
 env_populate
 conf_read
 hook_exec pre-mount
+
+debug "Starting uam mounter on ${DEVPATH}."
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then
 	# 1) try to mount using fstab, this way we also determine if it's already mounted

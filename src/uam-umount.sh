@@ -9,17 +9,18 @@ LIBDIR="$(dirname "$0")"
 DEVPATH="${DEVNAME:-$1}"
 
 if [ -z "${DEVPATH}" ]; then
+	conf_read
 	debug "No device supplied."
 	exit 1
 fi
-
-debug "Starting uam umounter on ${DEVPATH}."
 
 # We (try to) umount all mounts (not only ours), because the device will be unavailable anyway
 
 MP="$(mp_find "${DEVPATH}")"
 conf_read
 hook_exec pre-umount
+
+debug "Starting uam umounter on ${DEVPATH}."
 
 if [ -n "${MP}" ]; then
 	debug "... found ${DEVPATH} mounted in ${MP}, trying to umount."
