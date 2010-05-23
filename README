@@ -14,14 +14,6 @@ additional daemons -- HAL, dbus & the mounter itself. Instead you just have to
 have udev running (which you'd like to have anyway) and uam will be called by it
 everytime an USB stick is inserted.
 
-It has few drawbacks too. The most important that it can't mount ejectable
-drives -- it fully depends on udev, which doesn't report anything when CD or
-floppy is inserted.
-
-Currently there is also no mechanism for allowing non-root users to umount
-uam-mounted drives. They can either 'sync' the device and hope everything will
-be fine when they remove the disk (uam will unmount it then) or use pmount.
-
 
 == INSTALLING
 
@@ -44,6 +36,18 @@ You'd probably like to reload udev rules, too:
 It should 'just work'. If it doesn't, take a look at syslog and/or configuration
 file. If you're sure everything is set right, contact me and I'll see what I can
 do for you.
+
+
+== USE OF PMOUNT
+
+Due to non-daemonic and non-interactive nature of uam, there is a fair amount
+of features which can't be implemented in it. As there's no real reason
+to duplicate well-developed and working solutions, it is officially suggested
+to use pmount along with uam.
+
+The pmount utility can be used to manually unmount removable devices mounted
+by uam (thus making sure all I/O is synced) and mount ejectable media (like CDs
+or floppies) which can't be done by uam due to its reliance on udev triggers.
 
 
 == HOOK SUPPORT
