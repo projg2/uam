@@ -1,2 +1,3 @@
 SUBSYSTEM=="block", ACTION=="add", SUBSYSTEMS=="usb", ENV{ID_FS_USAGE}=="filesystem", RUN+="/lib/udev/uam/uam-mount.sh"
+SUBSYSTEM=="block", ACTION=="add", SUBSYSTEMS=="mmc", ENV{ID_FS_USAGE}=="filesystem", RUN+="/lib/udev/uam/uam-mount.sh"
 SUBSYSTEM=="block", ACTION=="remove", ENV{ID_FS_USAGE}=="filesystem", RUN+="/lib/udev/uam/uam-umount.sh"
