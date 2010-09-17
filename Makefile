@@ -9,7 +9,7 @@ RULESDIR	= /etc/udev/rules.d
 
 # End of simple config, you shall not pass below
 
-VERSION		= 0.0.5
+VERSION		= 0.0.6
 
 BUILDDIR	= build
 SRCDIR		= src

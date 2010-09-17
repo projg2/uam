@@ -1,6 +1,11 @@
 uam NEWS
 
 
+uam-0.0.6:
+	* minor bugfixes,
+	* support for bash arrays,
+	* mmc subsystem devices are mounted by default.
+
 uam-0.0.5:
 	* support for hooks,
 	* sw-notify-send notification support (through supplied hooks),
