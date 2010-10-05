@@ -26,9 +26,8 @@ case "$1" in
 		[ ! -f "${NOTEFILE}" ]					&& exit 1 # not our symlink
 		[ "$(cat "${NOTEFILE}")" != "${UPID}" ]	&& exit 1 # not this symlink
 
-		rm "${D}"
 		conf_read
-		if [ $? -eq 0 ]; then
+		if rm "${D}"; then
 			debug "...... successfully removed symlink ${D}."
 		else
 			debug "...... unable to remove symlink ${D}."
