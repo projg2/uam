@@ -58,8 +58,8 @@ try_mountpoint() {
 			return 0
 		else
 			local mountoutput
-			debug "... mountpoint ${MP} free, using it."
-			mountoutput=$(mount -o $(get_mountopts "${ID_FS_TYPE}") "${DEVPATH}" "${MP}" 2>&1)
+			debug "... mountpoint ${mp} free, using it."
+			mountoutput=$(mount -o $(get_mountopts "${ID_FS_TYPE}") "${DEVPATH}" "${mp}" 2>&1)
 
 			if [ ${?} -eq 0 ]; then
 				debug "...... mount successful."
