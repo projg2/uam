@@ -17,7 +17,8 @@ HOOKDIR="${CONFDIR}"/uam-hooks
 # Empty means we're using SVN trunk
 VERSION=
 
-# Read configuration
+# <source> conf_read()
+# Read the configuration file.
 
 conf_read() {
 	. "${CONFDIR}"/uam.conf
@@ -33,99 +34,106 @@ local_supported || eval 'local() {
 	:
 }'
 
-# Parse value of boolean variable.
-# If second arg is specified, it is printed if the value evalutes to true.
-# If third arg is specified, it is printed if the value evaluates to false.
+# <bool[+stdout]> bool( <value> [<if-true>] [<if-false>] )
+# Parse the value of a boolean variable, returning the appropriate
+# return code. If <if-true> is specified, that string will be echoed
+# if the variable evaluates to true. If <if-false> is specified, it will
+# be echoed otherwise.
 
 bool() {
-	case "$1" in
+	case "${1}" in
 		1|[yY]|[tT]|[yY][eE][sS]|[tT][rR][uU][eE]|[oO][nN])
-			[ -n "$2" ] && echo $2
+			[ -n "${2}" ] && echo ${2}
 			return 0;;
 		0|[nN]|[fF]|[nN][oO]|[fF][aA][lL][sS][eE]|[oO][fF][fF])
-			[ -n "$3" ] && echo $3
+			[ -n "${3}" ] && echo ${3}
 			return 1;;
 		*)
-			outmsg "Incorrect value in bool ($1), assuming false."
-			[ -n "$3" ] && echo $3
+			outmsg "Incorrect value in bool (${1}), assuming false."
+			[ -n "${3}" ] && echo ${3}
 			return 1;;
 	esac
 }
 
-# Check whether value is a correct integer.
+# <bool> isint( <value> )
+# Check whether the value is a correct integer.
 
 isint() {
-	local VAL
-	VAL="$1"
+	local val
+	val=${1}
 	
-	: $(( VAL *= 1 ))
+	: $(( val *= 1 ))
 
-	[ "${VAL}" = "$1" ]
+	[ "${val}" = "${1}" ]
 }
 
+# <bool> under_udev()
 # Determine whether we were called by udev.
 
 under_udev() {
 	[ -n "${DEVNAME}" ]
 }
 
-# If running under udev, output specified message using syslog
-# else just print it into STDERR.
+# [<stderr>] outmsg( <message> [...] )
+# If running under udev, output specified message using syslog;
+# otherwise simply print it to STDERR.
 
 outmsg() {
 	if under_udev; then
-		local IDENT PRIO
+		local ident prio
 
-		IDENT="$(basename "$0")[${DEVNAME}]"
-		PRIO=info
+		ident="$(basename "${0}")[${DEVNAME}]"
+		prio=info
 
-		logger -p ${PRIO} -t "${IDENT}" "$(echo $@)"
-		case $? in
+		logger -p ${prio} -t "${ident}" ${*}
+		case ${?} in
 			0)
 				;;
 			126|127)
-				# no 'logger' util
-				# try fallbacking to perl
-				echo $@ | perl -MSys::Syslog -e "undef $/; openlog('${IDENT}'); syslog('${PRIO}', <>);"
+				# No 'logger' util, try falling back to perl.
+				echo ${*} | perl -MSys::Syslog -e "undef $/; openlog('${ident}'); syslog('${prio}', <>);"
 				;;
 			default)
-				# syntax error? try SUS-compliant one
-				logger "$(echo $@)"
+				# A syntax error? Try the POSIX-compliant one.
+				logger ${*}
 		esac
 	else
-		echo "$(echo $@)" >&2
+		echo ${*} >&2
 	fi
 }
 
-# Output msg using outmsg() when ${VERBOSE} is on.
+# [<stderr>] debug( <message> [...] )
+# Output msg using outmsg() if ${VERBOSE} is on.
 
 debug() {
-	bool "${VERBOSE}" && outmsg "$@"
+	bool "${VERBOSE}" && outmsg "${@}"
 }
 
-# Output msg using outmsg() when ${VERBOSE} is off.
+# <env[+stderr]> summary( <message> [...] )
+# Output msg using outmsg() if ${VERBOSE} is off.
 
 summary() {
-	SUMMARY="$@"
-	bool "${VERBOSE}" || outmsg "$@"
+	SUMMARY=${@}
+	bool "${VERBOSE}" || outmsg "${@}"
 }
 
-# Populate environment with device information.
+# <env[+exit]> env_populate()
+# Populate the environment with the device information.
 
 env_populate() {
-	# udev already does this for us
+	# udev already does this for us.
 	if ! under_udev; then
-		local __ENV RET
+		local __env ret
 		if [ -x /sbin/blkid ]; then
-			__ENV="$(/sbin/blkid -o udev "${DEVPATH}")"
+			__env=$(/sbin/blkid -o udev "${DEVPATH}")
 		elif [ -x "${SYSLIBDIR}"/udev/vol_id ]; then
-			__ENV="$("${SYSLIBDIR}"/udev/vol_id --export "${DEVPATH}")"
+			__env=$("${SYSLIBDIR}"/udev/vol_id --export "${DEVPATH}")
 		else
 			false
 		fi
 
-		if [ $? -eq 0 ]; then
-			eval "${__ENV}"
+		if [ ${?} -eq 0 ]; then
+			eval "${__env}"
 		else
 			debug "... unable to get device information."
 			exit 1
@@ -133,46 +141,53 @@ env_populate() {
 	fi
 
 	# uam-specific variables
-	DEVBASENAME="$(basename "${DEVPATH}")"
-	SERIAL="${ID_SERIAL%-${ID_INSTANCE}}"
-	PARTN="${DEVBASENAME##*[^0-9]}"
+	DEVBASENAME=$(basename "${DEVPATH}")
+	SERIAL=${ID_SERIAL%-${ID_INSTANCE}}
+	PARTN=${DEVBASENAME##*[^0-9]}
 }
 
 MP_NOTEFN=".created_by_uam"
 
-# Get processed array.
+# <stdout> getarray( <array> )
+# Output the processed array.
 
 getarray() {
-	echo "$1" | awk -f "${LIBDIR}/array.awk"
+	echo "${1}" | awk -f "${LIBDIR}"/array.awk
 }
 
-# Execute provided function for each of array elements.
-# Function should return false to break the loop, else true.
+# <callback> foreach( <array-name> <callback-func> [<arg1> .. <arg4>] )
+# where <callback-func> should be:
+# <bool> <callback-func>( <array-elem> [<arg1> .. <arg4>] )
+# 
+# Call the provided function for each of the array elements, passing
+# that element and <arg1> to <arg4>. If the function wishes to break
+# out of the loop, it shall return false. Otherwise, it shall return
+# true.
 
 foreach() {
-	local FUNC arrname
-	arrname="$1"
-	FUNC="$2"
+	local func arrname
+	arrname=${1}
+	func=${2}
 
-	# pass max 4 args to the func
-	local ADDARGA ADDARGB ADDARGC ADDARGD
-	ADDARGA="$3"
-	ADDARGB="$4"
-	ADDARGC="$5"
-	ADDARGD="$6"
+	# Pass max 4 arguments to the func.
+	local addarga addargb addargc addargd
+	addarga=${3}
+	addargb=${4}
+	addargc=${5}
+	addargd=${6}
 
-	local isarray
+	local isarray arrtest
 
-	isarray=0
-	if [ -n "${BASH_VERSION}" ]; then
-		local arrtest
-		arrtest="$(declare -p ${arrname})"
+	# Maybe it's an bash-alike array?
+	arrtest=$(declare -p ${arrname})
 
-		if [ -n "${arrtest}" ]; then
-			# at this point we can really assume shell is bash
-			[[ "${arrtest}" == 'declare -a'* ]] && isarray=1
-		fi
-	fi
+	case "${arrtest}" in
+		'declare -a'*)
+			isarray=1
+			;;
+		*)
+			isarray=0
+	esac
 
 	if [ ${isarray} -eq 1 ]; then
 		eval set -- '"${'${arrname}'[@]}"'
@@ -180,23 +195,26 @@ foreach() {
 		eval set -- "$(eval getarray '"${'${arrname}'}"')"
 	fi
 
-	while [ $# -gt 0 ]; do
-		"${FUNC}" "$1" "${ADDARGA}" "${ADDARGB}" "${ADDARGC}" "${ADDARGD}" || break
+	while [ ${#} -gt 0 ]; do
+		"${func}" "${1}" "${addarga}" "${addargb}" "${addargc}" "${addargd}" || break
 		shift
 	done
 }
 
-# Create parent directories whenever needed
-mkdir_parents() {
-	local PAR
-	PAR="${1%/*}"
+# mkdir_parents( <path> )
+# Create parent directories whenever needed.
 
-	if [ ! -d "${PAR}" ]; then
-		debug "...... trying to create ${PAR}"
-		mkdir -m "${PARENT_PERMS}" -p "${PAR}"
+mkdir_parents() {
+	local par
+	par=${1%/*}
+
+	if [ ! -d "${par}" ]; then
+		debug "...... trying to create ${par}"
+		mkdir -m "${PARENT_PERMS}" -p "${par}"
 	fi
 }
 
+# <source> hook_exec( <hook-type> )
 # Evaluate the particular type of hooks. Please notice that in order to be able
 # to modify certain environment variables, hooks are being executed through
 # '.' (AKA 'source'). This means they should avoid 'exit', 'exec' and similar
@@ -204,7 +222,7 @@ mkdir_parents() {
 
 hook_exec() {
 	local hooktype fn
-	hooktype="$1"
+	hooktype=${1}
 
 	if [ -d "${HOOKDIR}"/"${hooktype}" ]; then
 		for fn in "${HOOKDIR}"/"${hooktype}"/*; do
