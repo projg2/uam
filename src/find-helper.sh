@@ -15,7 +15,10 @@ case "$1" in
 		D="$(dirname "$2")"
 		MP="$(mp_used "${D}")"
 
-		[ -z "${MP}" ] && mp_remove "${D}"
+		if [ -z "${MP}" ]; then
+			conf_read
+			mp_remove "${D}"
+		fi
 		;;
 	--remove-symlink)
 		[ $# -ge 2 ] || exit 1
