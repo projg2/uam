@@ -91,7 +91,7 @@ outmsg() {
 				;;
 			126|127)
 				# No 'logger' util, try falling back to perl.
-				echo ${*} | perl -MSys::Syslog -e "undef $/; openlog('${ident}'); syslog('${prio}', <>);"
+				echo ${*} | perl -MSys::Syslog -e "undef \$/; openlog('${ident}'); syslog('${prio}', <>);"
 				;;
 			default)
 				# A syntax error? Try the POSIX-compliant one.
@@ -284,7 +284,7 @@ mp_remove() {
 
 _mp_countslashes() {
 	local mp
-	mp=$(echo "$1" | tr -c -d /)
+	mp=$(echo "${1}" | tr -c -d /)
 	[ ${#mp} -gt ${DEPTH} ] && DEPTH=${#mp}
 	:
 }
@@ -358,7 +358,7 @@ mp_find() {
 
 get_mountopts() {
 	local fs val
-	fs=$(echo "$1" | tr a-z A-Z | tr -cd A-Z)
+	fs=$(echo "${1}" | tr a-z A-Z | tr -cd A-Z)
 
 	[ -n "${fs}" ]	&& val=$(eval "echo \${MOUNT_OPTS_${fs}"})
 	[ -z "${val}" ]	&& val=${MOUNT_OPTS}

@@ -2,11 +2,11 @@
 # uam - umount
 # (c) 2008/09 Michał Górny
 
-LIBDIR="$(dirname "$0")"
+LIBDIR=$(dirname "${0}")
 
 . "${LIBDIR}"/uam-common.sh
 
-DEVPATH="${DEVNAME:-$1}"
+DEVPATH=${DEVNAME:-${1}}
 
 if [ -z "${DEVPATH}" ]; then
 	conf_read
@@ -14,37 +14,34 @@ if [ -z "${DEVPATH}" ]; then
 	exit 1
 fi
 
-# We (try to) umount all mounts (not only ours), because the device will be unavailable anyway
+# We (try to) umount all mounts (not only ours), because the device will
+# be unavailable anyway.
 
-MP="$(mp_find "${DEVPATH}")"
+mp=$(mp_find "${DEVPATH}")
 conf_read
 hook_exec pre-umount
 
 debug "Starting uam umounter on ${DEVPATH}."
 
-if [ -n "${MP}" ]; then
-	debug "... found ${DEVPATH} mounted in ${MP}, trying to umount."
+if [ -n "${mp}" ]; then
+	debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."
 	umount "${DEVPATH}"
-	if [ $? -eq 0 ]; then
+	if [ ${?} -eq 0 ]; then
 		debug "...... standard umount successful."
 		summary "umounted sucessfully."
 
-		# if we created the mountpoint, try to remove it
-		mp_remove "${MP}"
+		# If we created the mountpoint, try to remove it.
+		mp_remove "${mp}"
 	else
-		unset RO_DONE
-		if $(bool "${UMOUNT_TRY_RO}"); then
-			mount -o remount,ro "${DEVPATH}"
-			if [ $? -eq 0 ]; then
-				debug "...... filesystem remounted read-only."
-				RO_DONE=1
-			fi
+		unset ro_done
+		if bool "${UMOUNT_TRY_RO}" && mount -o remount,ro "${DEVPATH}"; then
+			debug "...... filesystem remounted read-only."
+			ro_done=1
 		fi
 
-		bool "${UMOUNT_TRY_LAZY}" && umount -l "${DEVPATH}"
-		if [ $? -eq 0 ]; then
+		if bool "${UMOUNT_TRY_LAZY}" && umount -l "${DEVPATH}"; then
 			debug "...... lazy umount successful."
-			summary "${RO_DONE+remounted R/O and }scheduled lazy umount."
+			summary "${ro_done+remounted R/O and }scheduled lazy umount."
 		else
 			debug "...... unable to umount device."
 			summary "umount failed."
@@ -54,7 +51,7 @@ if [ -n "${MP}" ]; then
 	hook_exec post-umount
 else
 	debug "... not mounted."
-	# it is possible that user umounted the fs him/herself, so cleanup the mountpoints
+	# It is possible that user umounted the fs him/herself, so cleanup
+	# the mountpoints.
 	mp_cleanup
 fi
-

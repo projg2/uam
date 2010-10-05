@@ -4,7 +4,7 @@
 
 [ ${#} -ge 2 ] || exit 1
 
-LIBDIR=$(dirname "$0")
+LIBDIR=$(dirname "${0}")
 
 . "${LIBDIR}"/uam-common.sh
 conf_read
