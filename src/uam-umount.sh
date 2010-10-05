@@ -1,6 +1,7 @@
 #!/bin/sh
-# uam - umount
-# (c) 2008/09 Michał Górny
+# uam -- unmounter script
+# (c) 2008-2010 Michał Górny
+# Released under the terms of the 3-clause BSD license
 
 LIBDIR=$(dirname "${0}")
 

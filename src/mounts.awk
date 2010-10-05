@@ -1,5 +1,6 @@
-# /proc/mounts parsing with escapes support
+# uam -- /proc/mounts parsing with escape sequences support
 # (c) 2009 Michał Górny
+# Released under the terms of the 3-clause BSD license
 
 function unescape(str) {
 	gsub(/\\012/, "\n", str)

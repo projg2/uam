@@ -1,5 +1,5 @@
 udev-based automounter (uam)
-(C) 2008-2010 Michał Górny
+(c) 2008-2010 Michał Górny
 Released under the terms of the 3-clause BSD license
 
 
@@ -78,7 +78,6 @@ the mountpoint but is it useful at all?
 environment variable can be used to get the umount result-message.
 
 
-== CONTACT
+== BUGREPORTS
 
-http://mgorny.alt.pl/contact.html
-
+http://github.com/mgorny/uam/issues

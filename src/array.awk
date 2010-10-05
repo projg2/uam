@@ -1,5 +1,6 @@
-# bash-alike array processing
+# uam -- bash-alike array processing
 # (c) 2009 Michał Górny
+# Released under the terms of the 3-clause BSD license
 
 BEGIN {
 	ORS = ""

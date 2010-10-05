@@ -1,6 +1,7 @@
 #!/bin/sh
-# uam - helper for 'find -exec'
-# (c) 2009 Michał Górny
+# uam -- helper script for 'find -exec'
+# (c) 2009-2010 Michał Górny
+# Released under the terms of the 3-clause BSD license
 
 [ ${#} -ge 2 ] || exit 1
 
