@@ -4,7 +4,7 @@
 
 [ ${#} -ge 2 ] || exit 1
 
-LIBDIR="$(dirname "$0")"
+LIBDIR=$(dirname "$0")
 
 . "${LIBDIR}"/uam-common.sh
 conf_read
@@ -13,7 +13,7 @@ case "${1}" in
 	--remove-mountpoint)
 		while [ ${#} -gt 1 ]; do
 			d=$(dirname "${2}")
-			mp=$(mp_used "${D}")
+			mp=$(mp_used "${d}")
 
 			[ -z "${mp}" ] && mp_remove "${d}"
 			shift
@@ -30,9 +30,9 @@ case "${1}" in
 			[ "$(cat "${notefile}")" != "${UPID}" ] && continue # not this symlink
 
 			if rm "${d}"; then
-				debug "...... successfully removed symlink ${D}."
+				debug "...... successfully removed symlink ${d}."
 			else
-				debug "...... unable to remove symlink ${D}."
+				debug "...... unable to remove symlink ${d}."
 			fi
 		done
 		;;
