@@ -2,39 +2,39 @@
 # uam - helper for 'find -exec'
 # (c) 2009 Michał Górny
 
-[ $# -ge 1 ] || exit 1
+[ ${#} -ge 2 ] || exit 1
 
 LIBDIR="$(dirname "$0")"
 
 . "${LIBDIR}"/uam-common.sh
+conf_read
 
-case "$1" in
+case "${1}" in
 	--remove-mountpoint)
-		[ $# -ge 2 ] || exit 1
+		while [ ${#} -gt 1 ]; do
+			d=$(dirname "${2}")
+			mp=$(mp_used "${D}")
 
-		D="$(dirname "$2")"
-		MP="$(mp_used "${D}")"
-
-		if [ -z "${MP}" ]; then
-			conf_read
-			mp_remove "${D}"
-		fi
+			[ -z "${mp}" ] && mp_remove "${d}"
+			shift
+		done
 		;;
 	--remove-symlink)
-		[ $# -ge 2 ] || exit 1
-		# SUS - readlink's not there
+		while [ ${#} -gt 1 ]; do
+			# POSIX doesn't give us readlink...
+			d=${2}
+			notefile=${d}/${MP_NOTEFN}
+			shift
 
-		D="$2"
-		NOTEFILE="${D}/${MP_NOTEFN}"
-		[ ! -f "${NOTEFILE}" ]					&& exit 1 # not our symlink
-		[ "$(cat "${NOTEFILE}")" != "${UPID}" ]	&& exit 1 # not this symlink
+			[ ! -f "${notefile}" ] && continue # not our symlink
+			[ "$(cat "${notefile}")" != "${UPID}" ] && continue # not this symlink
 
-		conf_read
-		if rm "${D}"; then
-			debug "...... successfully removed symlink ${D}."
-		else
-			debug "...... unable to remove symlink ${D}."
-		fi
+			if rm "${d}"; then
+				debug "...... successfully removed symlink ${D}."
+			else
+				debug "...... unable to remove symlink ${D}."
+			fi
+		done
 		;;
 	*)
 		exit 1

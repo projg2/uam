@@ -295,7 +295,7 @@ mp_rmsymlinks() {
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) \
 			-maxdepth $(mp_getmaxdepth SYMLINK_TEMPLATES) \
 			-type l \
-			-exec "${LIBDIR}/find-helper.sh" --remove-symlink '{}' ';'
+			-exec "${LIBDIR}/find-helper.sh" --remove-symlink {} +
 }
 
 # Remove unused mountpoints (useful if user umounts our devices himself).
@@ -309,7 +309,7 @@ mp_cleanup() {
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 \
 			-maxdepth $(( MAXDEPTH + 1 )) \
 			-name "${MP_NOTEFN}" -type f \
-			-exec "${LIBDIR}/find-helper.sh" --remove-mountpoint '{}' ';'
+			-exec "${LIBDIR}/find-helper.sh" --remove-mountpoint {} +
 }
 
 # Determine whether a mountpoint is used and print the device it is used by.
