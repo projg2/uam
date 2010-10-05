@@ -234,66 +234,68 @@ hook_exec() {
 	fi
 }
 
-# Create mountpoint if it doesn't exist.
+# mp_create( <mountpoint-path> )
+# Create the mountpoint if it doesn't exist yet.
 
 mp_create() {
-	local MP NOTEFILE
-	MP="$1"
-	NOTEFILE="${MP}/${MP_NOTEFN}"
+	local mp notefile
+	mp=${1}
+	notefile=${mp}/${MP_NOTEFN}
 
 	# we need to call it instead of using 'mkdir -p' below
 	# because we want parents to have another permissions
-	mkdir_parents "${MP}"
+	mkdir_parents "${mp}"
 	if [ ! -d "${MP}" ]; then
-		debug "... trying to create ${MP}"
-		mkdir -m "${MP_PERMS}" "${MP}"
-		date -u "+%D %T $$" > "${NOTEFILE}"
+		debug "... trying to create ${mp}"
+		mkdir -m "${MP_PERMS}" "${mp}"
+		date -u "+%D %T ${$}" > "${notefile}"
 	fi
 }
 
+# mp_remove( <mountpoint-path> )
 # Remove mountpoint if it's ours.
 
 mp_remove() {
 	bool "${REMOVE_MOUNTPOINTS}" || return
 
-	local MP NOTEFILE
-	MP="$1"
-	NOTEFILE="${MP}/${MP_NOTEFN}"
+	local mp notefile
+	mp=${1}
+	notefile=${mp}/${MP_NOTEFN}
 
-	if [ -f "${NOTEFILE}" ]; then
-		# SUS doesn't allow us to use readlink
-		# so we need to do the symlink search first to find NOTEFILEs
-		mp_rmsymlinks "$(cat "${NOTEFILE}")"
+	if [ -f "${notefile}" ]; then
+		# POSIX doesn't allow us to use readlink, so we need to
+		# do a symlink search to find the notefiles.
+		mp_rmsymlinks "$(cat "${notefile}")"
 
-		rm "${NOTEFILE}"
-		rmdir "${MP}"
-		if [ $? -eq 0 ]; then
-			debug "...... successfully removed mp ${MP}."
+		rm "${notefile}"
+		if rmdir "${mp}"; then
+			debug "...... successfully removed mp ${mp}."
 		else
-			# touch the file again, so if above rm succeeded and rmdir failed,
-			# we still will know that's our mountpoint
-			touch "${NOTEFILE}"
-			debug "...... unable to remove mp ${MP}."
+			# Touch the file again, so if the above rm succeeded
+			# and rmdir failed, we will still own the mountpoint.
+			touch "${notefile}"
+			debug "...... unable to remove mp ${mp}."
 		fi
 	fi
 }
 
-# Count slashes in arg and increase ${DEPTH} if needed
+# <env> _mp_countslashes( <path> )
+# Count slashes in the <path> and increase ${DEPTH} as necessary.
 
 _mp_countslashes() {
-	local MP
-	MP="$(echo "$1" | tr -cd /)"
-	[ ${#MP} -gt ${DEPTH} ] && DEPTH=${#MP}
-
-	return 0
+	local mp
+	mp=$(echo "$1" | tr -c -d /)
+	[ ${#mp} -gt ${DEPTH} ] && DEPTH=${#mp}
+	:
 }
 
+# <stdout> mp_getmaxdepth( <array-name> )
 # Calculate -maxdepth for given templates.
 
 mp_getmaxdepth() {
 	local DEPTH arrname
-	DEPTH="${CLEANUP_MAXDEPTH}"
-	arrname="$1"
+	DEPTH=${CLEANUP_MAXDEPTH}
+	arrname=${1}
 
 	if ! isint "${DEPTH}"; then
 		DEPTH=0
@@ -303,12 +305,15 @@ mp_getmaxdepth() {
 	echo $(( DEPTH + 1 ))
 }
 
-# Find and remove symlinks to mountpoint.
+# mp_rmsymlinks( <pid> )
+# Find and remove symlinks to the mountpoint matching PID <pid>.
 
 mp_rmsymlinks() {
-	local UPID NOTEFILE
-	UPID="$1"
+	local UPID
 	bool "${CLEANUP_SYMLINKS}" || return
+
+	UPID=${1}
+	export UPID
 
 	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) \
 			-maxdepth $(mp_getmaxdepth SYMLINK_TEMPLATES) \
@@ -316,42 +321,47 @@ mp_rmsymlinks() {
 			-exec "${LIBDIR}/find-helper.sh" --remove-symlink {} +
 }
 
-# Remove unused mountpoints (useful if user umounts our devices himself).
-# Doesn't support more complex templates.
+# mp_cleanup()
+# Remove the unused mountpoints (useful if user umounts our device
+# him-/herself). Won't work with more complex templates.
 
 mp_cleanup() {
+	local maxdepth
 	bool "${CLEANUP_ALLOW}" || return
-	local D MP MAXDEPTH
-	MAXDEPTH=$(mp_getmaxdepth MOUNTPOINT_TEMPLATES)
+	maxdepth=$(mp_getmaxdepth MOUNTPOINT_TEMPLATES)
 
-	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) -mindepth 2 \
-			-maxdepth $(( MAXDEPTH + 1 )) \
+	find "${MOUNTPOINT_BASE}" $(bool "${CLEANUP_XDEV}" -xdev) \
+			-mindepth 2 -maxdepth $(( maxdepth + 1 )) \
 			-name "${MP_NOTEFN}" -type f \
 			-exec "${LIBDIR}/find-helper.sh" --remove-mountpoint {} +
 }
 
-# Determine whether a mountpoint is used and print the device it is used by.
+# <stdout> mp_used( <mountpoint-path> )
+# Determine whether a particular mountpoint is used and print the device
+# which is mounted in it.
 
 mp_used() {
-	awk -f "${LIBDIR}/mounts.awk" -v mp="$1" /proc/mounts
+	awk -f "${LIBDIR}/mounts.awk" -v mp="${1}" /proc/mounts
 }
 
-# Determine whether a device is mounted and print the mountpoint it uses.
+# <stdout> mp_find( <device-path> )
+# Determine whether a device is mounted and print the mountpoint it is
+# mounted in.
 
 mp_find() {
-	awk -f "${LIBDIR}/mounts.awk" -v dev="$1" /proc/mounts
+	awk -f "${LIBDIR}/mounts.awk" -v dev="${1}" /proc/mounts
 }
 
-# Gets MOUNT_OPTS correct for specific filesystem. If there are no specific opts
-# set, uses global ones.
+# <stdout> get_mountopts( <filesystem> )
+# Get the MOUNT_OPTS_* correct for a specific filesystem.
+# If no filesystem-specific are set, global MOUNT_OPTS are used.
 
 get_mountopts() {
-	local FS VAL
-	FS="$(echo "$1" | tr a-z A-Z | tr -cd A-Z)"
+	local fs val
+	fs=$(echo "$1" | tr a-z A-Z | tr -cd A-Z)
 
-	[ -n "${FS}" ]	&& VAL="$(eval "echo \${MOUNT_OPTS_${FS}"})"
-	[ -z "${VAL}" ]	&& VAL="${MOUNT_OPTS}"
+	[ -n "${fs}" ]	&& val=$(eval "echo \${MOUNT_OPTS_${fs}"})
+	[ -z "${val}" ]	&& val=${MOUNT_OPTS}
 
-	echo "${VAL}"
+	echo "${val}"
 }
-
