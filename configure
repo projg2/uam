@@ -1,0 +1,69 @@
+#!/bin/sh
+
+PN=uam
+PV=0.0.6
+FC_API_WANT=0
+
+conf_init() {
+	fc_inherit install patch
+	
+	fc_export_functions \
+		conf_get_targets
+
+	# override the default prefix
+	: ${PREFIX=/}
+}
+
+conf_get_targets() {
+	local d
+
+	fc_export scriptdir '$(LIBDIR)/udev/uam'
+	fc_export confdir '$(SYSCONFDIR)/udev'
+	fc_export hookdir '$(confdir)/uam-hooks'
+	fc_export rulesdir '$(SYSCONFDIR)/udev/rules.d'
+
+	# shell scripts
+	for s in uam-mount uam-umount find-helper; do
+		fc_sed src/${s}.sh src/${s}.sh.out \
+			's:^\(LIBDIR=\).*$$:\1$(scriptdir):'
+		fc_install_as -x '$(scriptdir)' src/${s}.sh.out ${s}.sh
+	done
+
+	# uam-common.sh
+	fc_sed src/uam-common.sh src/uam-common.sh.out \
+		's:^\(CONFDIR=\).*$$:\1$(confdir):' \
+		's:^\(SYSLIBDIR=\).*$$:\1$(LIBDIR):' \
+		's:^\(HOOKDIR=\).*$$:\1$(hookdir):' \
+		"s:^\(VERSION=\).*\$\$:\1${PV}:"
+	fc_install_as '$(scriptdir)' src/uam-common.sh.out uam-common.sh
+
+	# awk scripts
+	fc_install '$(scriptdir)' src/array.awk src/mounts.awk
+
+	# the udev rules file
+	fc_sed 80-uam.rules 80-uam.rules.out \
+		's:/lib/udev/uam:$(scriptdir):'
+	fc_install_as '$(rulesdir)' 80-uam.rules.out 80-uam.rules
+
+	# the config file (XXX: protect it)
+	fc_install '$(confdir)' uam.conf
+
+	# the hooks
+	for d in pre-mount post-mount pre-umount post-umount mount-failed; do
+		set -- uam-hooks/${d}/*
+		if [ -f "${1}" ]; then
+			fc_install '$(hookdir)'/${d} "${@}"
+		else
+			fc_install_dir '$(hookdir)'/${d}
+		fi
+	done
+}
+
+. fastconf.sh
+
+echo 'This package requires fastconf in order to be built.'
+echo 'Please grab it from:'
+echo '	http://github.com/mgorny/fastconf/'
+echo 'or your favourite package manager and install.'
+echo 'Afterwards, rerun this ./configure script. Thank you.'
+exit 2
