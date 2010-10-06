@@ -55,7 +55,7 @@ conf_get_targets() {
 		if [ -f "${1}" ]; then
 			fc_install '$(hookdir)'/${d} "${@}"
 		else
-			fc_install_dir '$(hookdir)'/${d}
+			fc_install_dir -k '$(hookdir)'/${d}
 		fi
 	done
 }
