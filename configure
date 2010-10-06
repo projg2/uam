@@ -15,35 +15,36 @@ conf_init() {
 }
 
 conf_get_targets() {
-	local d
+	local d s scripts
 
 	fc_export scriptdir '$(LIBDIR)/udev/uam'
 	fc_export confdir '$(SYSCONFDIR)/udev'
 	fc_export hookdir '$(confdir)/uam-hooks'
 	fc_export rulesdir '$(SYSCONFDIR)/udev/rules.d'
 
-	# shell scripts
-	for s in uam-mount uam-umount find-helper; do
-		fc_sed src/${s}.sh src/${s}.sh.out \
-			's:^\(LIBDIR=\).*$$:\1$(scriptdir):'
-		fc_install_as -x '$(scriptdir)' src/${s}.sh.out ${s}.sh
-	done
+	fc_set_builddir build
 
-	# uam-common.sh
-	fc_sed src/uam-common.sh src/uam-common.sh.out \
+	# the executables
+	scripts='build/uam-mount.sh build/uam-umount.sh build/find-helper.sh'
+	for s in ${scripts}; do
+		fc_sed src/${s#build/} ${s} \
+			's:^\(LIBDIR=\).*$$:\1$(scriptdir):'
+	done
+	fc_install -x '$(scriptdir)' ${scripts}
+
+	# the utility scripts
+	fc_sed src/uam-common.sh build/uam-common.sh \
 		's:^\(CONFDIR=\).*$$:\1$(confdir):' \
 		's:^\(SYSLIBDIR=\).*$$:\1$(LIBDIR):' \
 		's:^\(HOOKDIR=\).*$$:\1$(hookdir):' \
 		"s:^\(VERSION=\).*\$\$:\1${PV}:"
-	fc_install_as '$(scriptdir)' src/uam-common.sh.out uam-common.sh
+	fc_install '$(scriptdir)' build/uam-common.sh \
+		src/array.awk src/mounts.awk
 
-	# awk scripts
-	fc_install '$(scriptdir)' src/array.awk src/mounts.awk
-
-	# the udev rules file
-	fc_sed 80-uam.rules 80-uam.rules.out \
+	# the udev rule file
+	fc_sed 80-uam.rules build/80-uam.rules \
 		's:/lib/udev/uam:$(scriptdir):'
-	fc_install_as '$(rulesdir)' 80-uam.rules.out 80-uam.rules
+	fc_install '$(rulesdir)' build/80-uam.rules
 
 	# the config file (XXX: protect it)
 	fc_install '$(confdir)' uam.conf
