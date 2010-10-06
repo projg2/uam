@@ -1,3 +1,7 @@
 if bool "${HOOK_SW_NOTIFY}"; then
-	sw-notify-send -c device.error -i error,drive-removable-media -- "$(basename "${DEVPATH}") failed to mount" "Unable to mount ${DEVPATH}: ${SUMMARY}"
+	sw-notify-send \
+		-c device.error \
+		-i error,drive-removable-media -- \
+		"$(basename "${DEVPATH}") failed to mount" \
+		"Unable to mount ${DEVPATH}: ${SUMMARY}"
 fi
