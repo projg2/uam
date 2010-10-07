@@ -46,8 +46,8 @@ conf_get_targets() {
 		's:/lib/udev/uam:$(scriptdir):'
 	fc_install '$(rulesdir)' build/80-uam.rules
 
-	# the config file (XXX: protect it)
-	fc_install '$(confdir)' uam.conf
+	# the config file
+	fc_install_conf '$(confdir)' uam.conf
 
 	# the hooks
 	for d in pre-mount post-mount pre-umount post-umount mount-failed; do
