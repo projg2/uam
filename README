@@ -3,7 +3,8 @@ udev-based automounter (uam)
 Released under the terms of the 3-clause BSD license
 
 
-== INTRO
+Introduction
+============
 
 What is it all about? This is just simple tool for mounting pendrives and alikes
 when inserted -- something like ivman or functionality integrated in KDE/GNOME.
@@ -15,30 +16,16 @@ have udev running (which you'd like to have anyway) and uam will be called by it
 everytime an USB stick is inserted.
 
 
-== INSTALLING
-
-If you're using Gentoo, you'd probably like to use the ebuild from Sunrise:
-# layman -a sunrise # if necessary
-# emerge uam
-
-Else, you can install it manually:
-$ make
-# make install
-...and you're done. The scripts will be installed in /lib/udev/uam/, config file
-will be located in /etc/udev and rules file in /etc/udev/rules.d/.
-
-You'd probably like to reload udev rules, too:
-# udevadm control --reload-rules
-
-
-== USING
+Using
+=====
 
 It should 'just work'. If it doesn't, take a look at syslog and/or configuration
 file. If you're sure everything is set right, contact me and I'll see what I can
 do for you.
 
 
-== USE OF PMOUNT
+Use of pmount
+=============
 
 Due to non-daemonic and non-interactive nature of uam, there is a fair amount
 of features which can't be implemented in it. As there's no real reason
@@ -50,7 +37,8 @@ by uam (thus making sure all I/O is synced) and mount ejectable media (like CDs
 or floppies) which can't be done by uam due to its reliance on udev triggers.
 
 
-== HOOK SUPPORT
+Hook support
+============
 
 As of version 0.0.5, uam supports 'hooks' -- user-provided scripts which are
 sourced when specific conditions occur. These can be used to alter the device
@@ -78,6 +66,9 @@ the mountpoint but is it useful at all?
 environment variable can be used to get the umount result-message.
 
 
-== BUGREPORTS
+Bug reports
+===========
 
 http://github.com/mgorny/uam/issues
+
+<!-- vim:se syn=markdown : -->
