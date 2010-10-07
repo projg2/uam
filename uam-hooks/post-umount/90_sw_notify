@@ -1,6 +1,6 @@
 if bool "${HOOK_SW_NOTIFY}"; then
 	sw-notify-send \
 		-i drive-removable-media -- \
-		"$(basename "${MP}") removed" \
+		"$(basename "${mp}") removed" \
 		"${DEVPATH} ${SUMMARY}"
 fi
