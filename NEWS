@@ -1,6 +1,11 @@
 uam NEWS
 
 
+uam-0.0.7:
+	* fix cleaning up mountpoints,
+	* general code cleanup,
+	* migrated buildsystem to fastconf.
+
 uam-0.0.6:
 	* minor bugfixes,
 	* support for bash arrays,
