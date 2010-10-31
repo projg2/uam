@@ -23,20 +23,20 @@ MOSTLYCLEANFILES = $(rules_DATA) $(script_DATA) $(script_SCRIPTS) .keep
 
 $(rules_DATA): Makefile
 	rm -f $@ $@.tmp
-	sed -e "s|/lib/udev/uam|${scriptdir}|" ${srcdir}/$@.in > $@.tmp
+	@SED@ -e "s|/lib/udev/uam|${scriptdir}|" ${srcdir}/$@.in > $@.tmp
 	chmod a-w $@.tmp
 	mv $@.tmp $@
 
 $(script_SCRIPTS): Makefile
 	rm -f $@ $@.tmp
-	sed -e "s|^\(LIBDIR=\).*$$|\1${scriptdir}|" ${srcdir}/src/$@ > $@.tmp
+	@SED@ -e "s|^\(LIBDIR=\).*$$|\1${scriptdir}|" ${srcdir}/src/$@ > $@.tmp
 	chmod +x $@.tmp
 	chmod a-w $@.tmp
 	mv $@.tmp $@
 
 $(script_DATA): Makefile
 	rm -f $@ $@.tmp
-	sed \
+	@SED@ \
 		-e 's|^\(CONFDIR=\).*$$|\1${confdir}|' \
 		-e 's|^\(SYSLIBDIR=\).*$$|\1${libdir}|' \
 		-e 's|^\(HOOKDIR=\).*$$|\1${hookdir}|' \
