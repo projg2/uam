@@ -19,10 +19,15 @@ HOOKDIR="${CONFDIR}"/uam-hooks
 VERSION=
 
 # <source> conf_read()
-# Read the configuration file.
+# Read the configuration file and enable tracing if requested.
 
 conf_read() {
 	. "${CONFDIR}"/uam.conf
+
+	if [ -n "${TRACE}" ]; then
+		exec >> "${TRACE}" 2>&1
+		set -x
+	fi
 }
 
 # Declare local() function if shell doesn't support 'local' builtin.
