@@ -1,6 +1,9 @@
 uam NEWS
 
 
+uam-0.0.7.1:
+	* switch the buildsystem to autotools.
+
 uam-0.0.7:
 	* fix cleaning up mountpoints,
 	* general code cleanup,
