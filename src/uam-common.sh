@@ -27,6 +27,7 @@ conf_read() {
 	if [ -n "${TRACE}" ]; then
 		exec >> "${TRACE}" 2>&1
 		date
+		env
 		set -x
 	fi
 }
