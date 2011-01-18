@@ -17,10 +17,11 @@ BEGIN {
 
 	for (i = 1; i <= len; i++) {
 		ch = substr($0, i, 1)
+		isspace = match(ch, /[ \t\r\n]/)
 
 		# wasspace can't be set when in*
 		# so we need only simple check
-		if (!match(ch, /[[:space:]]/)) {
+		if (!isspace) {
 			if (!hadfirst) {
 				hadfirst = 1
 			} else if (wasspace) {
@@ -39,7 +40,7 @@ BEGIN {
 			indquote = !indquote
 		} else if (ch == "'" && !inbslash && !indquote) {
 			insquote = !insquote
-		} else if (!indquote && !insquote && match(ch, /[[:space:]]/)) {
+		} else if (!indquote && !insquote && isspace) {
 			wasspace = 1
 		}
 
