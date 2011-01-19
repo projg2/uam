@@ -71,7 +71,14 @@ Bug reports
 
 It is preferred to use Gentoo Bugzilla [1] for that (with `sys-apps/uam`
 in the summary). If you don't have an account there and prefer to use github
-bugtracker [2], feel free to. 
+bugtracker [2], feel free to.
+
+Please attach (or paste) the debug trace (obtained through setting `TRACE`
+in `uam.conf`) if possible. It helps me a lot. Otherwise, please try to obtain
+and attach (using root account):
+- `blkid -o udev`,
+- `udevadm monitor --property` output while plugging in the device,
+- the program version and your `uam.conf`.
 
 [1]:http://bugs.gentoo.org/enter_bug.cgi?product=Gentoo%20Linux&component=Applications&short_desc=sys-apps/uam:%20
 [2]:http://github.com/mgorny/uam/issues
