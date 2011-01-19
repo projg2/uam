@@ -69,6 +69,11 @@ environment variable can be used to get the umount result-message.
 Bug reports
 ===========
 
-http://github.com/mgorny/uam/issues
+It is preferred to use Gentoo Bugzilla [1] for that (with `sys-apps/uam`
+in the summary). If you don't have an account there and prefer to use github
+bugtracker [2], feel free to. 
+
+[1]:http://bugs.gentoo.org/enter_bug.cgi?product=Gentoo%20Linux&component=Applications&short_desc=sys-apps/uam:%20
+[2]:http://github.com/mgorny/uam/issues
 
 <!-- vim:se syn=markdown : -->
