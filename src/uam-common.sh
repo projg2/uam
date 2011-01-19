@@ -26,6 +26,7 @@ conf_read() {
 
 	if [ -n "${TRACE}" ]; then
 		exec >> "${TRACE}" 2>&1
+		printf 'uam %s @ ' "${VERSION}"
 		date
 		env
 		set -x
