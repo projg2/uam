@@ -1,0 +1,17 @@
+if bool "${HOOK_WAIT_FOR_MEDIA}"; then
+	while ! touch "${MOUNTPOINT_BASE}"/.uam_write_test; do
+		if [ -z "${UAM_WAS_FORKED}" ]; then
+			debug "... ${MOUNTPOINT_BASE} not writable, forking to avoid blocking udev."
+			UAM_WAS_FORKED=1
+			export UAM_WAS_FORKED
+			"${0}" "${DEVPATH}" &
+			exit 0
+		else
+			sleep 2
+		fi
+	done
+
+	rm -f "${MOUNTPOINT_BASE}"/.uam_write_test
+fi
+
+# vim:syn=sh
