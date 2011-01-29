@@ -1,3 +1,24 @@
-SUBSYSTEM=="block", ACTION=="add", SUBSYSTEMS=="usb", ENV{ID_FS_USAGE}=="filesystem", RUN+="/lib/udev/uam/uam-mount.sh"
-SUBSYSTEM=="block", ACTION=="add", SUBSYSTEMS=="mmc", ENV{ID_FS_USAGE}=="filesystem", RUN+="/lib/udev/uam/uam-mount.sh"
-SUBSYSTEM=="block", ACTION=="remove", ENV{ID_FS_USAGE}=="filesystem", RUN+="/lib/udev/uam/uam-umount.sh"
+# Rule set for uam automounter
+
+# Basic filtering first:
+# - block layer events only
+SUBSYSTEM!="block", GOTO="uam_end"
+# - recognized filesystems only
+ENV{ID_FS_USAGE}!="filesystem", GOTO="uam_end"
+# - if partition table is found, mount only the partitions (e.g. UDF)
+ENV{DEVTYPE}!="partition", ENV{ID_PART_TABLE_TYPE}=="?*", GOTO="uam_end"
+
+# Now limit to events specific to particular removable subsystems.
+SUBSYSTEMS=="usb", GOTO="uam_actions"
+SUBSYSTEMS=="mmc", GOTO="uam_actions"
+GOTO="uam_end"
+
+# The actual actions.
+LABEL="uam_actions"
+ACTION=="add", RUN+="/lib/udev/uam/uam-mount.sh"
+ACTION=="remove", RUN+="/lib/udev/uam/uam-umount.sh"
+
+# Nothing to see, move along.
+LABEL="uam_end"
+
+# vim:syn=udevrules
