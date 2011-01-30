@@ -96,9 +96,9 @@ fi
 
 env_populate
 conf_read
-hook_exec pre-mount
 
 debug "Starting uam mounter on ${DEVPATH}."
+hook_exec pre-mount
 
 if [ "${ID_FS_TYPE}" != "swap" ]; then
 	# 1) try to mount using fstab, this way we also determine if it's already mounted

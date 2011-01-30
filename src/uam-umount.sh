@@ -20,9 +20,9 @@ fi
 
 mp=$(mp_find "${DEVPATH}")
 conf_read
-hook_exec pre-umount
 
 debug "Starting uam umounter on ${DEVPATH}."
+hook_exec pre-umount
 
 if [ -n "${mp}" ]; then
 	debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."
