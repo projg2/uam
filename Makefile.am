@@ -14,8 +14,9 @@ uahookdir = ${hookdir}/post-umount
 dist_mfhook_DATA = uam-hooks/mount-failed/90_sw_notify
 dist_mahook_DATA = uam-hooks/post-mount/90_sw_notify
 dist_uahook_DATA = uam-hooks/post-umount/90_sw_notify
-ubhook_DATA = .keep
-dist_mbhook_DATA = uam-hooks/pre-mount/00_wait_for_media
+dist_ubhook_DATA = uam-hooks/pre-umount/00_filter_devices
+dist_mbhook_DATA = uam-hooks/pre-mount/00_filter_devices \
+	uam-hooks/pre-mount/00_wait_for_media
 
 EXTRA_DIST = 80-uam.rules.in \
 		src/uam-common.sh src/uam-mount.sh src/uam-umount.sh src/find-helper.sh

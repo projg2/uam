@@ -1,0 +1,6 @@
+if filter_devices; then
+	debug "... device omitted by filter_devices()."
+	exit 0
+fi
+
+# vim:syn=sh
