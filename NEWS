@@ -1,5 +1,14 @@
 uam NEWS
 
+uam-0.1.1:
+	- cleaned up the udev rule file,
+	- fixed trying to mount whole partitioned, UDF-formatted disk,
+	- added support for device filtering through uam.conf.
+
+uam-0.1:
+    - (finally) fixed the issue of running before rootfs was mounted r/w,
+	- updated trace logs to contain all information needed for debugging,
+	- fixed compat with mawk-1.3.3 (for Debians).
 
 uam-0.0.7.1:
 	* switch the buildsystem to autotools.
