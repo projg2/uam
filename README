@@ -67,17 +67,18 @@ like 'exit', 'exec', 'return' and similar in the outer scope (as that would
 cause exiting uam).
 
 The following hook types (which are subdirectory names too) are supported:
-1) pre-mount -- called after getting the basic device information but before
+
+1. pre-mount -- called after getting the basic device information but before
 the mounting procedure starts. They can be used to alter both device information
 and uam configuration for specific devices.
-2) post-mount -- called after device is successfully mounted. These can be used
+2. post-mount -- called after device is successfully mounted. These can be used
 to notify the user or update the environment.
-3) mount-failed -- called whenever uam has tried all possible mountpoints and
+3. mount-failed -- called whenever uam has tried all possible mountpoints and
 was unable to mount a particular device.
-4) pre-umount -- called after getting the mountpoint for a particular device
+4. pre-umount -- called after getting the mountpoint for a particular device
 but before starting the unmount procedure. These scripts could alter
 the mountpoint but is it useful at all?
-5) post-umount -- called after successful or unsuccessful umount. The SUMMARY
+5. post-umount -- called after successful or unsuccessful umount. The SUMMARY
 environment variable can be used to get the umount result-message.
 
 
@@ -91,6 +92,7 @@ bugtracker [2], feel free to.
 Please attach (or paste) the debug trace (obtained through setting `TRACE`
 in `uam.conf`) if possible. It helps me a lot. Otherwise, please try to obtain
 and attach (using root account):
+
 - `blkid -o udev`,
 - `udevadm monitor --property` output while plugging in the device,
 - the program version and your `uam.conf`.
