@@ -11,12 +11,15 @@ ENV{DEVTYPE}!="partition", ENV{ID_PART_TABLE_TYPE}=="?*", GOTO="uam_end"
 # Now limit to events specific to particular removable subsystems.
 SUBSYSTEMS=="usb", GOTO="uam_actions"
 SUBSYSTEMS=="mmc", GOTO="uam_actions"
+# ...or a media change notification.
+ENV{DISK_MEDIA_CHANGE}=="1", GOTO="uam_actions"
 GOTO="uam_end"
 
 # The actual actions.
 LABEL="uam_actions"
 ACTION=="add", RUN+="/lib/udev/uam/uam-mount.sh"
 ACTION=="remove", RUN+="/lib/udev/uam/uam-umount.sh"
+ACTION=="change", RUN+="/lib/udev/uam/uam-mount.sh"
 
 # Nothing to see, move along.
 LABEL="uam_end"

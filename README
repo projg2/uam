@@ -24,6 +24,21 @@ file. If you're sure everything is set right, contact me and I'll see what I can
 do for you.
 
 
+Mounting ejectable media (CD/DVD disks)
+=======================================
+
+With recent kernels, uam should be able to mount CD/DVD disks and other
+ejectable media as well. In order to do that, you have to enable in-kernel
+polling and set a suitable poll interval through sysfs:
+
+	echo 5000 > /sys/module/block/parameters/events_dfl_poll_msecs
+
+This will cause all ejectable drives to be polled every 5 seconds. You can set a
+poll interval per-device too, e.g.:
+
+	echo 5000 > /sys/block/sr0/events_poll_msec
+
+
 Use of pmount
 =============
 
