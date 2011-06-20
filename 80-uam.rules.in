@@ -3,6 +3,8 @@
 # Basic filtering first:
 # - block layer events only
 SUBSYSTEM!="block", GOTO="uam_end"
+# -> if an eject request, we need to skip fs checks
+ENV{DISK_EJECT_REQUEST}=="1", GOTO="uam_actions"
 # - recognized filesystems only
 ENV{ID_FS_USAGE}!="filesystem", GOTO="uam_end"
 # - if partition table is found, mount only the partitions (e.g. UDF)
@@ -19,7 +21,8 @@ GOTO="uam_end"
 LABEL="uam_actions"
 ACTION=="add", RUN+="/lib/udev/uam/uam-mount.sh"
 ACTION=="remove", RUN+="/lib/udev/uam/uam-umount.sh"
-ACTION=="change", RUN+="/lib/udev/uam/uam-mount.sh"
+ACTION=="change", ENV{DISK_MEDIA_CHANGE}=="1", RUN+="/lib/udev/uam/uam-mount.sh"
+ACTION=="change", ENV{DISK_EJECT_REQUEST}=="1", RUN+="/lib/udev/uam/uam-umount.sh"
 
 # Nothing to see, move along.
 LABEL="uam_end"
