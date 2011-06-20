@@ -76,6 +76,8 @@ try_mountpoint() {
 		fi
 
 		foreach SYMLINK_TEMPLATES try_symlink "${mp}"
+		# If getting a change request, look for orphans.
+		[ ${ACTION} = change ] && mp_cleanup
 
 		hook_exec post-mount
 		exit 0
