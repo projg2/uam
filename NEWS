@@ -1,5 +1,8 @@
 uam NEWS
 
+uam-0.2:
+	- added support for ejectable media (CD/DVD drives).
+
 uam-0.1.1:
 	- cleaned up the udev rule file,
 	- fixed trying to mount whole partitioned, UDF-formatted disk,
