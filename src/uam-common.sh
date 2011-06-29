@@ -367,7 +367,7 @@ mp_find() {
 
 get_mountopts() {
 	local fs val
-	fs=$(echo "${1}" | tr a-z A-Z | tr -cd A-Z)
+	fs=$(echo "${1}" | tr a-z- A-Z_ | tr -cd A-Z0-9_)
 
 	[ -n "${fs}" ]	&& val=$(eval "echo \${MOUNT_OPTS_${fs}"})
 	[ -z "${val}" ]	&& val=${MOUNT_OPTS}
