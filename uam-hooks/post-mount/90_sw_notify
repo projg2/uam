@@ -1,6 +1,8 @@
 if bool "${HOOK_SW_NOTIFY}"; then
+	MU_SUMMARY=$(echo "${SUMMARY}" | sed -e "s|\(/.*\)\.$|<a href=\"\1\">\1</a>|" 2>/dev/null)
+
 	sw-notify-send \
 		-i drive-removable-media -- \
 		"$(basename "${mp}") mounted" \
-		"${DEVPATH} ${SUMMARY}"
+		"${DEVPATH} ${MU_SUMMARY:-${SUMMARY}}"
 fi
