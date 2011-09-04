@@ -1,8 +1,19 @@
 if bool "${HOOK_SW_NOTIFY}"; then
 	MU_SUMMARY=$(echo "${SUMMARY}" | sed -e "s|\(/.*\)\.$|<a href=\"\1\">\1</a>|" 2>/dev/null)
 
+	set --
+	tinynotify-send --help | grep action >/dev/null 2>&1
+	if [ ${?} -eq 0 ]; then # actions supported
+		set -- "${@}" -a "Unmount:umount ${DEVPATH}"
+
+		if [ "${DISK_MEDIA_CHANGE}" = "1" ]; then
+			set -- "${@}" -a "Eject:eject ${DEVPATH}"
+		fi
+	fi
+
 	sw-notify-send \
-		-i drive-removable-media -- \
+		-i drive-removable-media \
+		"${@}" -- \
 		"$(basename "${mp}") mounted" \
 		"${DEVPATH} ${MU_SUMMARY:-${SUMMARY}}"
 fi
