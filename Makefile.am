@@ -55,3 +55,9 @@ uam-common.sh: src/uam-common.sh
 uam-mount.sh: src/uam-mount.sh
 uam-umount.sh: src/uam-umount.sh
 find-helper.sh: src/find-helper.sh
+
+EXTRA_DIST += NEWS
+NEWS: configure.ac Makefile.am
+	git for-each-ref refs/tags --sort '-*committerdate' \
+		--format '# %(tag) (%(*committerdate:short))%0a%(contents:body)' \
+		> NEWS
