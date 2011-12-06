@@ -191,7 +191,7 @@ foreach() {
 	local isarray arrtest
 
 	# Maybe it's an bash-alike array?
-	arrtest=$(declare -p ${arrname})
+	arrtest=$(declare -p ${arrname} 2>/dev/null)
 
 	case "${arrtest}" in
 		'declare -a'*)
