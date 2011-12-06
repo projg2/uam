@@ -18,11 +18,13 @@ HOOKDIR="${CONFDIR}"/uam-hooks
 # Empty means we're using SVN trunk
 VERSION=
 
-# <source> conf_read()
+# <source> conf_read( [<overrides>] )
 # Read the configuration file and enable tracing if requested.
 
 conf_read() {
 	. "${CONFDIR}"/uam.conf
+
+	eval "${@}"
 
 	if [ -n "${TRACE}" ]; then
 		exec >> "${TRACE}" 2>&1
