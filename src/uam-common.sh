@@ -128,7 +128,7 @@ summary() {
 	bool "${VERBOSE}" || outmsg "${@}"
 }
 
-# <env+bool> env_populate()
+# <env+bool> env_populate( [<cache-path>] )
 # Populate the environment with the device information.
 
 env_populate() {
@@ -136,7 +136,11 @@ env_populate() {
 	if ! under_udev; then
 		local __env ret
 		if [ -x /sbin/blkid ]; then
-			__env=$(/sbin/blkid -o udev "${DEVPATH}")
+			if [ -n "${1}" ]; then
+				__env=$(/sbin/blkid -c "${1}" -o udev "${DEVPATH}")
+			else
+				__env=$(/sbin/blkid -o udev "${DEVPATH}")
+			fi
 		elif [ -x "${SYSLIBDIR}"/udev/vol_id ]; then
 			__env=$("${SYSLIBDIR}"/udev/vol_id --export "${DEVPATH}")
 		else
