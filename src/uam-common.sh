@@ -144,6 +144,7 @@ env_populate() {
 		if [ ${?} -eq 0 ]; then
 			eval "${__env}"
 		else
+			conf_read
 			debug "... unable to get device information."
 			exit 1
 		fi
