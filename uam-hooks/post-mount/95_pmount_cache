@@ -1,0 +1,18 @@
+# If this is enabled, try to store the device information in a helper
+# cache.
+
+if [ -n "${HOOK_PMOUNT_CACHE}" -a -x /sbin/blkid ]; then
+	(
+		if [ -n "${MOUNT_GROUP}" ]; then
+			umask 027
+		else
+			umask 022
+		fi
+
+		/sbin/blkid -c "${HOOK_PMOUNT_CACHE}" "${DEVPATH}" >/dev/null 2>&1
+
+		if [ -n "${MOUNT_GROUP}" ]; then
+			chown :"${MOUNT_GROUP}" "${HOOK_PMOUNT_CACHE}"
+		fi
+	)
+fi

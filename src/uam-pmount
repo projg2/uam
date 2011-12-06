@@ -30,7 +30,8 @@ if [ -z "${DEVPATH}" ]; then
 	exit 1
 fi
 
-if ! env_populate; then
+conf_read TRACE=
+if ! env_populate "${HOOK_PMOUNT_CACHE}"; then
 	outmsg "Unable to get device information."
 	exit 1
 fi

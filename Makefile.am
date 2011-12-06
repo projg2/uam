@@ -13,7 +13,8 @@ ubhookdir = ${hookdir}/pre-umount
 uahookdir = ${hookdir}/post-umount
 
 dist_mfhook_DATA = uam-hooks/mount-failed/90_sw_notify
-dist_mahook_DATA = uam-hooks/post-mount/90_sw_notify
+dist_mahook_DATA = uam-hooks/post-mount/90_sw_notify \
+	uam-hooks/post-mount/95_pmount_cache
 dist_uahook_DATA = uam-hooks/post-umount/90_sw_notify
 dist_ubhook_DATA = uam-hooks/pre-umount/00_filter_devices
 dist_mbhook_DATA = uam-hooks/pre-mount/00_filter_devices \
