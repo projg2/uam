@@ -23,7 +23,7 @@ dist_mbhook_DATA = uam-hooks/pre-mount/00_filter_devices \
 EXTRA_DIST = 80-uam.rules.in \
 		src/uam-common.sh src/uam-mount.sh src/uam-umount.sh src/find-helper.sh \
 		src/uam-pmount
-MOSTLYCLEANFILES = $(rules_DATA) $(script_DATA) $(script_SCRIPTS) .keep
+CLEANFILES = $(rules_DATA) $(script_DATA) $(script_SCRIPTS) $(bin_SCRIPTS) .keep
 
 $(rules_DATA): Makefile
 	rm -f $@ $@.tmp
