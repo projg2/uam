@@ -96,7 +96,12 @@ if [ -z "${DEVPATH}" ]; then
 	exit 1
 fi
 
-env_populate
+if ! env_populate; then
+	conf_read
+	debug "... unable to get device information."
+	exit 1
+fi
+
 conf_read
 
 debug "Starting uam mounter on ${DEVPATH}."

@@ -126,7 +126,7 @@ summary() {
 	bool "${VERBOSE}" || outmsg "${@}"
 }
 
-# <env[+exit]> env_populate()
+# <env+bool> env_populate()
 # Populate the environment with the device information.
 
 env_populate() {
@@ -144,9 +144,7 @@ env_populate() {
 		if [ ${?} -eq 0 ]; then
 			eval "${__env}"
 		else
-			conf_read
-			debug "... unable to get device information."
-			exit 1
+			return 1
 		fi
 	fi
 
@@ -154,6 +152,8 @@ env_populate() {
 	DEVBASENAME=$(basename "${DEVPATH}")
 	SERIAL=${ID_SERIAL%-${ID_INSTANCE}}
 	PARTN=${DEVBASENAME##*[^0-9]}
+
+	return 0
 }
 
 MP_NOTEFN=".created_by_uam"
