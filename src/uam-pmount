@@ -1,0 +1,47 @@
+#!/bin/sh
+# uam -- pmount helper script
+# (c) 2008-2011 Michał Górny
+# Released under the terms of the 3-clause BSD license
+
+LIBDIR=$(dirname "${0}")
+
+. "${LIBDIR}"/uam-common.sh
+
+get_mountpoint() {
+	local _mp mp mpdev
+	_mp=${1}
+
+	[ -z "${_mp}" ] && return 0
+	mp=${MOUNTPOINT_BASE}/${_mp%%/}
+	mpdev=$(mp_used "${mp}")
+
+	if [ -z "${mpdev}" ]; then
+		MOUNTPOINT=${_mp%%/}
+		return 1
+	fi
+
+	return 0
+}
+
+DEVPATH=${1}
+
+if [ -z "${DEVPATH}" ]; then
+	outmsg "No device supplied."
+	exit 1
+fi
+
+if ! env_populate; then
+	outmsg "Unable to get device information."
+	exit 1
+fi
+
+conf_read TRACE= VERBOSE=1
+
+MOUNTPOINT=
+foreach MOUNTPOINT_TEMPLATES get_mountpoint
+
+if [ -n "${MOUNTPOINT}" ]; then
+	exec pmount "${DEVPATH}" "${MOUNTPOINT}"
+else
+	exec pmount "${DEVPATH}"
+fi

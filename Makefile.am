@@ -1,6 +1,7 @@
 rules_DATA = 80-uam.rules
 script_DATA = uam-common.sh
 script_SCRIPTS = uam-mount.sh uam-umount.sh find-helper.sh
+bin_SCRIPTS = uam-pmount
 
 dist_script_DATA = src/array.awk src/mounts.awk
 dist_conf_DATA = uam.conf
@@ -19,7 +20,8 @@ dist_mbhook_DATA = uam-hooks/pre-mount/00_filter_devices \
 	uam-hooks/pre-mount/00_wait_for_media
 
 EXTRA_DIST = 80-uam.rules.in \
-		src/uam-common.sh src/uam-mount.sh src/uam-umount.sh src/find-helper.sh
+		src/uam-common.sh src/uam-mount.sh src/uam-umount.sh src/find-helper.sh \
+		src/uam-pmount
 MOSTLYCLEANFILES = $(rules_DATA) $(script_DATA) $(script_SCRIPTS) .keep
 
 $(rules_DATA): Makefile
@@ -28,7 +30,7 @@ $(rules_DATA): Makefile
 	chmod a-w $@.tmp
 	mv $@.tmp $@
 
-$(script_SCRIPTS): Makefile
+$(script_SCRIPTS) $(bin_SCRIPTS): Makefile
 	rm -f $@ $@.tmp
 	@SED@ -e "s|^\(LIBDIR=\).*$$|\1${scriptdir}|" ${srcdir}/src/$@ > $@.tmp
 	chmod +x $@.tmp
@@ -55,6 +57,7 @@ uam-common.sh: src/uam-common.sh
 uam-mount.sh: src/uam-mount.sh
 uam-umount.sh: src/uam-umount.sh
 find-helper.sh: src/find-helper.sh
+uam-pmount: src/uam-pmount
 
 EXTRA_DIST += NEWS
 NEWS: configure.ac Makefile.am
