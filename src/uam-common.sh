@@ -162,7 +162,8 @@ env_populate() {
 	return 0
 }
 
-MP_NOTEFN=".created_by_uam"
+# Keep it compatible with pmount/pumount.
+MP_NOTEFN=".created_by_pmount"
 
 # <stdout> getarray( <array> )
 # Output the processed array.
