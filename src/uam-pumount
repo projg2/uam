@@ -1,0 +1,26 @@
+#!/bin/sh
+# uam -- pmount helper script
+# (c) 2008-2011 Michał Górny
+# Released under the terms of the 3-clause BSD license
+
+LIBDIR=$(dirname "${0}")
+
+. "${LIBDIR}"/uam-common.sh
+
+DEVPATH=${1}
+
+if [ -z "${DEVPATH}" ]; then
+	outmsg "No device supplied."
+	exit 1
+fi
+
+conf_read TRACE= VERBOSE=1
+
+hook_exec pre-umount
+
+pumount "${DEVPATH}"
+
+RET=${?}
+hook_exec post-umount
+
+exit ${RET}
