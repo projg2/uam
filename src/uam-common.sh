@@ -125,7 +125,10 @@ debug() {
 
 summary() {
 	SUMMARY=${@}
-	bool "${VERBOSE}" || outmsg "${@}"
+	if ! bool "${VERBOSE}"; then
+		under_udev || set -- "${DEVPATH}" "${@}"
+		outmsg "${@}"
+	fi
 }
 
 # <env+bool> env_populate( [<cache-path>] )
