@@ -23,6 +23,7 @@ get_mountpoint() {
 	return 0
 }
 
+unset DEVNAME
 DEVPATH=${1}
 
 if [ -z "${DEVPATH}" ]; then

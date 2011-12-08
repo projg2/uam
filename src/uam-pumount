@@ -7,6 +7,7 @@ LIBDIR=$(dirname "${0}")
 
 . "${LIBDIR}"/uam-common.sh
 
+unset DEVNAME
 DEVPATH=${1}
 
 if [ -z "${DEVPATH}" ]; then
