@@ -1,6 +1,14 @@
 if bool "${HOOK_SW_NOTIFY}"; then
+	set --
+	if tinynotify-send --help | grep action >/dev/null 2>&1; then
+		if pumount --version >/dev/null 2>&1; then
+			set -- "${@}" -a "Remount:uam-pmount ${DEVPATH}"
+		fi
+	fi
+
 	sw-notify-send \
-		-i drive-removable-media -- \
+		-i drive-removable-media \
+		"${@}" -- \
 		"$(basename "${mp}") removed" \
 		"${DEVPATH} ${SUMMARY}"
 fi
