@@ -10,3 +10,5 @@ Makefile.in
 /.keep
 /80-uam.rules
 /*.sh
+/uam-pmount
+/uam-pumount
