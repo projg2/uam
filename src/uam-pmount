@@ -38,11 +38,22 @@ fi
 
 conf_read TRACE= VERBOSE=1
 
+hook_exec pre-mount
+
 MOUNTPOINT=
 foreach MOUNTPOINT_TEMPLATES get_mountpoint
 
 if [ -n "${MOUNTPOINT}" ]; then
-	exec pmount "${DEVPATH}" "${MOUNTPOINT}"
+	pmount "${DEVPATH}" "${MOUNTPOINT}"
 else
-	exec pmount "${DEVPATH}"
+	pmount "${DEVPATH}"
 fi
+
+RET=${?}
+if [ ${RET} -eq 0 ]; then
+	hook_exec post-mount
+else
+	hook_exec mount-failed
+fi
+
+exit ${RET}
