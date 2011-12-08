@@ -1,4 +1,4 @@
-if bool "${HOOK_WAIT_FOR_MEDIA}"; then
+if under_udev && bool "${HOOK_WAIT_FOR_MEDIA}"; then
 	while ! touch "${MOUNTPOINT_BASE}"/.uam_write_test; do
 		if [ -z "${UAM_WAS_FORKED}" ]; then
 			debug "... ${MOUNTPOINT_BASE} not writable, forking to avoid blocking udev."

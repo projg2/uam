@@ -1,7 +1,7 @@
 # If this is enabled, try to store the device information in a helper
 # cache.
 
-if [ -n "${HOOK_PMOUNT_CACHE}" -a -x /sbin/blkid ]; then
+if under_udev && [ -n "${HOOK_PMOUNT_CACHE}" -a -x /sbin/blkid ]; then
 	(
 		if [ -n "${MOUNT_GROUP}" ]; then
 			umask 027

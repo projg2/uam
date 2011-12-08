@@ -1,4 +1,4 @@
-if filter_devices; then
+if under_udev && filter_devices; then
 	debug "... device omitted by filter_devices()."
 	exit 0
 fi
