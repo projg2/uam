@@ -7,8 +7,8 @@ LIBDIR=$(dirname "${0}")
 
 . "${LIBDIR}"/uam-common.sh
 
-get_mountpoint() {
-	local _mp mp mpdev
+try_mountpoint() {
+	local _mp mp mpdev ret
 	_mp=${1}
 
 	[ -z "${_mp}" ] && return 0
@@ -16,8 +16,22 @@ get_mountpoint() {
 	mpdev=$(mp_used "${mp}")
 
 	if [ -z "${mpdev}" ]; then
-		MOUNTPOINT=${_mp%%/}
-		return 1
+		debug "... mountpoint ${mp} free, using it."
+
+		pmount "${DEVPATH}" "${_mp%%/}"
+
+		ret=${?}
+		if [ ${ret} -eq 0 ]; then
+			summary "mounted successfully in ${mp}."
+			hook_exec post-mount
+		else
+			summary "mount failed."
+			hook_exec mount-failed
+		fi
+
+		exit ${ret}
+	else
+		debug "... mountpoint ${mp} already used for ${mpdev}."
 	fi
 
 	return 0
@@ -37,24 +51,16 @@ if ! env_populate "${HOOK_PMOUNT_CACHE}"; then
 	exit 1
 fi
 
-conf_read TRACE= VERBOSE=1
+conf_read TRACE=
+
+debug "Running uam-pmount on ${DEVPATH}."
 
 hook_exec pre-mount
 
-MOUNTPOINT=
-foreach MOUNTPOINT_TEMPLATES get_mountpoint
+foreach MOUNTPOINT_TEMPLATES try_mountpoint
 
-if [ -n "${MOUNTPOINT}" ]; then
-	pmount "${DEVPATH}" "${MOUNTPOINT}"
-else
-	pmount "${DEVPATH}"
-fi
+debug "... no more mountpoints, failing."
+summary "unable to find a free mountpoint."
+hook_exec mount-failed
 
-RET=${?}
-if [ ${RET} -eq 0 ]; then
-	hook_exec post-mount
-else
-	hook_exec mount-failed
-fi
-
-exit ${RET}
+exit 1
