@@ -48,7 +48,7 @@ if [ -n "${mp}" ]; then
 			summary "umount failed."
 		fi
 	fi
-	
+
 	hook_exec post-umount
 else
 	debug "... not mounted."
