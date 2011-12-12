@@ -33,8 +33,8 @@ find_devpath() {
 find_devpath "${@}"
 
 if [ -z "${DEVPATH}" ]; then
-	outmsg "No device supplied."
-	exit 1
+	pumount "${@}"
+	exit ${?}
 fi
 
 mp=$(mp_find "${DEVPATH}")

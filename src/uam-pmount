@@ -58,8 +58,8 @@ find_devpath() {
 find_devpath "${@}"
 
 if [ -z "${DEVPATH}" ]; then
-	outmsg "No device supplied."
-	exit 1
+	pmount "${@}"
+	exit ${?}
 fi
 
 if [ -z "${LABEL}" ]; then
