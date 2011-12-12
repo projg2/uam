@@ -38,29 +38,41 @@ if [ -z "${DEVPATH}" ]; then
 fi
 
 mp=$(mp_find "${DEVPATH}")
+
+if [ -z "${mp}" ]; then
+	# Passed a mountpoint?
+
+	mp=${DEVPATH}
+	DEVPATH=$(mp_used "${mp}")
+
+	if [ -z "${DEVPATH}" ]; then
+		DEVPATH=${mp}
+		conf_read TRACE=
+
+		summary "is not mounted."
+		debug "... not mounted."
+		exit 1
+	fi
+fi
+
 conf_read TRACE=
 
 debug "Running uam-pumount on ${DEVPATH}."
 
 hook_exec pre-umount
 
-if [ -n "${mp}" ]; then
-	debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."
+debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."
 
-	pumount "${@}"
+pumount "${@}"
 
-	RET=${?}
-	if [ ${RET} -eq 0 ]; then
-		debug "...... pumount successful."
-		summary "unmounted sucessfully."
-	else
-		debug "...... unable to pumount device."
-		summary "pumount failed."
-	fi
-	hook_exec post-umount
+RET=${?}
+if [ ${RET} -eq 0 ]; then
+	debug "...... pumount successful."
+	summary "unmounted sucessfully."
 else
-	summary "is not mounted."
-	debug "... not mounted."
+	debug "...... unable to pumount device."
+	summary "pumount failed."
 fi
+hook_exec post-umount
 
 exit ${RET}
