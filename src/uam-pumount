@@ -7,8 +7,30 @@ LIBDIR=$(dirname "${0}")
 
 . "${LIBDIR}"/uam-common.sh
 
-unset DEVNAME
-DEVPATH=${1}
+unset DEVNAME DEVPATH
+
+find_devpath() {
+	local x hadargterm
+	hadargterm=
+
+	for x; do
+		case "${x}" in
+			--)
+				hadargterm=1
+				continue
+				;;
+			-*)
+				# Ignore pmount args
+				[ -n "${hadargterm}" ] || continue
+				;;
+		esac
+
+		DEVPATH=${x}
+		break
+	done
+}
+
+find_devpath "${@}"
 
 if [ -z "${DEVPATH}" ]; then
 	outmsg "No device supplied."
@@ -25,7 +47,7 @@ hook_exec pre-umount
 if [ -n "${mp}" ]; then
 	debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."
 
-	pumount "${DEVPATH}"
+	pumount "${@}"
 
 	RET=${?}
 	if [ ${RET} -eq 0 ]; then
