@@ -24,6 +24,7 @@ conf_read
 debug "Starting uam umounter on ${DEVPATH}."
 hook_exec pre-umount
 
+RET=0
 if [ -n "${mp}" ]; then
 	debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."
 	umount "${DEVPATH}"
@@ -44,6 +45,7 @@ if [ -n "${mp}" ]; then
 			debug "...... lazy umount successful."
 			summary "${ro_done+remounted R/O and }scheduled lazy umount."
 		else
+			RET=${?}
 			debug "...... unable to umount device."
 			summary "umount failed."
 		fi
@@ -56,3 +58,5 @@ else
 	# the mountpoints.
 	mp_cleanup
 fi
+
+exit ${RET}
