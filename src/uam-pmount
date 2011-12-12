@@ -18,18 +18,9 @@ try_mountpoint() {
 	if [ -z "${mpdev}" ]; then
 		debug "... mountpoint ${mp} free, using it."
 
-		pmount "${DEVPATH}" "${_mp%%/}"
-
-		ret=${?}
-		if [ ${ret} -eq 0 ]; then
-			summary "mounted successfully in ${mp}."
-			hook_exec post-mount
-		else
-			summary "mount failed."
-			hook_exec mount-failed
-		fi
-
-		exit ${ret}
+		MOUNTPOINT=${mp}
+		LABEL=${_mp%%/}
+		return 1
 	else
 		debug "... mountpoint ${mp} already used for ${mpdev}."
 	fi
@@ -37,18 +28,46 @@ try_mountpoint() {
 	return 0
 }
 
-unset DEVNAME
-DEVPATH=${1}
+unset DEVNAME DEVPATH LABEL MOUNTPOINT
+
+find_devpath() {
+	local x hadargterm
+	hadargterm=
+
+	for x; do
+		case "${x}" in
+			--)
+				hadargterm=1
+				continue
+				;;
+			-*)
+				# Ignore pmount args
+				[ -n "${hadargterm}" ] || continue
+				;;
+		esac
+
+		if [ -n "${DEVPATH}" ]; then
+			LABEL=${x}
+			break
+		else
+			DEVPATH=${x}
+		fi
+	done
+}
+
+find_devpath "${@}"
 
 if [ -z "${DEVPATH}" ]; then
 	outmsg "No device supplied."
 	exit 1
 fi
 
-conf_read TRACE=
-if ! env_populate "${HOOK_PMOUNT_CACHE}"; then
-	outmsg "Unable to get device information."
-	exit 1
+if [ -z "${LABEL}" ]; then
+	conf_read TRACE=
+	if ! env_populate "${HOOK_PMOUNT_CACHE}"; then
+		outmsg "Unable to get device information."
+		exit 1
+	fi
 fi
 
 conf_read TRACE=
@@ -57,10 +76,28 @@ debug "Running uam-pmount on ${DEVPATH}."
 
 hook_exec pre-mount
 
-foreach MOUNTPOINT_TEMPLATES try_mountpoint
+if [ -z "${LABEL}" ]; then
+	foreach MOUNTPOINT_TEMPLATES try_mountpoint
+fi
 
-debug "... no more mountpoints, failing."
-summary "unable to find a free mountpoint."
-hook_exec mount-failed
+if [ -n "${LABEL}" ]; then
+	[ -n "${MOUNTPOINT}" ] && set -- "${@}" "${LABEL}"
+	pmount "${@}"
 
-exit 1
+	ret=${?}
+	if [ ${ret} -eq 0 ]; then
+		summary "mounted successfully in ${MOUNTPOINT}."
+		hook_exec post-mount
+	else
+		summary "mount failed."
+		hook_exec mount-failed
+	fi
+
+	exit 0
+else
+	debug "... no more mountpoints, failing."
+	summary "unable to find a free mountpoint."
+	hook_exec mount-failed
+
+	exit 1
+fi
