@@ -36,7 +36,7 @@ polling and set a suitable poll interval through sysfs:
 This will cause all ejectable drives to be polled every 5 seconds. You can set a
 poll interval per-device too, e.g.:
 
-	echo 5000 > /sys/block/sr0/events_poll_msec
+	echo 5000 > /sys/block/sr0/events_poll_msecs
 
 If you'd like to make this setting permanent, you can add that option
 to the kernel command-line like:
