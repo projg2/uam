@@ -33,8 +33,8 @@ polling and set a suitable poll interval through sysfs:
 
 	echo 5000 > /sys/module/block/parameters/events_dfl_poll_msecs
 
-This will cause all ejectable drives to be polled every 5 seconds. You can set a
-poll interval per-device too, e.g.:
+This will cause all ejectable drives to be polled every 5 seconds. You can set
+a poll interval per-device too, e.g.:
 
 	echo 5000 > /sys/block/sr0/events_poll_msecs
 
@@ -46,6 +46,11 @@ to the kernel command-line like:
 For lilo, that would be:
 
 	append = "block.events_dfl_poll_msecs=5000"
+
+Please note that most likely the polling won't work with the old ATA drivers
+(the ones marked `DEPRECATED`). If you're still using them, you need to migrate
+to the new ones from under the `Serial ATA and Parallel ATA drivers` menu entry.
+Please note that you have to enable `SCSI CDROM support` as well.
 
 
 Use of pmount
