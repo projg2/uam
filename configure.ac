@@ -3,9 +3,9 @@ AC_INIT([uam], [0.2.1])
 AC_CONFIG_AUX_DIR([build-aux])
 AM_INIT_AUTOMAKE([1.6 foreign dist-bzip2 no-dependencies])
 
-AC_PREFIX_DEFAULT([/])
-AC_PREFIX_PROGRAM([udevd])
 AC_PROG_SED
+
+PKG_PROG_PKG_CONFIG
 
 # Avoid //
 if test x"$prefix" = x"/"; then
@@ -14,7 +14,15 @@ fi
 
 AC_ARG_WITH([udevdir],
 	AS_HELP_STRING([--with-udevdir=DIR], [the root udev install directory (LIBDIR/udev)]),
-	[], [with_udevdir=$libdir/udev])
+	[], [
+		AC_MSG_CHECKING([where udev lives])
+		with_udevdir=`$PKG_CONFIG --variable=udevdir udev`
+		AC_MSG_RESULT([$with_udevdir])
+
+		AS_IF([test x"$with_udevdir" = x""], [
+			AC_MSG_ERROR([unable to get udevdir from udev.pc])
+		])
+	])
 AC_ARG_WITH([rulesdir],
 	AS_HELP_STRING([--with-rulesdir=DIR], [the udev rules.d directory (UDEVDIR/rules.d)]),
 	[], [with_rulesdir=$with_udevdir/rules.d])
