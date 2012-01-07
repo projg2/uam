@@ -1,3 +1,7 @@
+DISTCHECK_CONFIGURE_FLAGS = \
+	--with-scriptdir=$$dc_install_base/lib/udev \
+	--with-rulesdir=$$dc_install_base/lib/udev/rules.d
+
 rules_DATA = 80-uam.rules
 script_DATA = uam-common.sh
 script_SCRIPTS = uam-mount.sh uam-umount.sh find-helper.sh
