@@ -18,6 +18,6 @@ if bool "${HOOK_SW_NOTIFY}"; then
 	sw-notify-send \
 		-i drive-removable-media \
 		"${@}" -- \
-		"$(basename "${mp}") mounted" \
+		"$(basename "${MOUNTPOINT}") mounted" \
 		"${DEVPATH} ${MU_SUMMARY:-${SUMMARY}}"
 fi
