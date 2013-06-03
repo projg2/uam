@@ -59,6 +59,9 @@ conf_read TRACE=
 
 debug "Running uam-pumount on ${DEVPATH}."
 
+# for hooks
+MOUNTPOINT=${mp}
+
 hook_exec pre-umount
 
 debug "... found ${DEVPATH} mounted in ${mp}, trying to umount."

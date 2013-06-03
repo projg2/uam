@@ -44,7 +44,7 @@ try_symlink() {
 }
 
 try_mountpoint() {
-	local _mp mp mpdev
+	local _mp mp mpdev MOUNTPOINT
 	_mp=${1}
 
 	[ -z "${_mp}" ] && return 0
@@ -53,6 +53,9 @@ try_mountpoint() {
 
 	if [ -z "${mpdev}" ]; then
 		mp_create "${mp}"
+
+		# for hooks
+		MOUNTPOINT=${mp}
 
 		if [ ! -d "${mp}" ]; then
 			debug "...... unable to create mountpoint, trying another one."
