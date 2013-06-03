@@ -60,7 +60,7 @@ conf_read TRACE=
 debug "Running uam-pumount on ${DEVPATH}."
 
 # for hooks
-MOUNTPOINT=${mp}
+MOUNTPOINT=${mp%%/}
 
 hook_exec pre-umount
 

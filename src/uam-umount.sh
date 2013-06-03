@@ -22,7 +22,7 @@ mp=$(mp_find "${DEVPATH}")
 conf_read
 
 # for hooks
-MOUNTPOINT=${mp}
+MOUNTPOINT=${mp%%/}
 
 debug "Starting uam umounter on ${DEVPATH}."
 hook_exec pre-umount
