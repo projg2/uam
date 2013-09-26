@@ -2,17 +2,14 @@ if bool "${HOOK_SW_NOTIFY}"; then
 	MU_SUMMARY=$(echo "${SUMMARY}" | sed -e "s|\(/.*\)\.$|<a href=\"\1\">\1</a>|" 2>/dev/null)
 
 	set --
-	sw-notify-send --help | grep action >/dev/null 2>&1
-	if [ ${?} -eq 0 ]; then # actions supported
-		if pumount --version >/dev/null 2>&1; then
-			set -- "${@}" -a "Unmount:uam-pumount ${DEVPATH}"
-		else
-			set -- "${@}" -a "Unmount:umount ${DEVPATH}"
-		fi
+	if pumount --version >/dev/null 2>&1; then
+		set -- "${@}" -a "Unmount:uam-pumount ${DEVPATH}"
+	else
+		set -- "${@}" -a "Unmount:umount ${DEVPATH}"
+	fi
 
-		if [ "${DISK_MEDIA_CHANGE}" = "1" ]; then
-			set -- "${@}" -a "Eject:eject ${DEVPATH}"
-		fi
+	if [ "${DISK_MEDIA_CHANGE}" = "1" ]; then
+		set -- "${@}" -a "Eject:eject ${DEVPATH}"
 	fi
 
 	sw-notify-send \
